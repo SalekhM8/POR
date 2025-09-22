@@ -2,11 +2,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import type { Route } from "next";
 import logo from "../../public/POR-removebg-preview.png";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const links = [
+  const links: { href: Route; label: string }[] = [
     { href: "/story", label: "My story" },
     { href: "/treatments", label: "Treatments" },
     { href: "/cases", label: "Case studies" },

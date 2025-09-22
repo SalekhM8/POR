@@ -5,7 +5,14 @@ export default function StartPage() {
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [values, setValues] = useState({
+  type FormValues = {
+    name: string;
+    email: string;
+    phone: string;
+    treatment: string;
+    message: string;
+  };
+  const [values, setValues] = useState<FormValues>({
     name: "",
     email: "",
     phone: "",
@@ -13,15 +20,16 @@ export default function StartPage() {
     message: "",
   });
 
-  const steps = [
+  type Step = { key: keyof FormValues; label: string; type: "text" | "email" | "select" | "textarea" };
+  const steps: Step[] = [
     { key: "name", label: "Your name", type: "text" },
     { key: "email", label: "Email", type: "email" },
     { key: "phone", label: "Phone (optional)", type: "text" },
-    { key: "treatment", label: "Treatment (optional)", type: "select" as const },
-    { key: "message", label: "What are you seeking?", type: "textarea" as const },
+    { key: "treatment", label: "Treatment (optional)", type: "select" },
+    { key: "message", label: "What are you seeking?", type: "textarea" },
   ];
 
-  function update(key: string, val: string) {
+  function update(key: keyof FormValues, val: string) {
     setValues((v) => ({ ...v, [key]: val }));
   }
 
@@ -51,7 +59,7 @@ export default function StartPage() {
           {current.type === "text" || current.type === "email" ? (
             <input
               type={current.type}
-              value={(values as any)[current.key]}
+              value={values[current.key]}
               onChange={(e) => update(current.key, e.target.value)}
               className="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 placeholder-white/60 focus:outline-none"
             />

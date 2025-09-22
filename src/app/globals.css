@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +12,21 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Locked dark theme for video contrast */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui;
 }
+
+/* Global helpers */
+html, body, #__next { height: 100%; }
+
+.text-shadow-soft { text-shadow: 0 2px 12px rgba(0,0,0,0.55); }
+
+.pill-button { @apply inline-flex items-center justify-center rounded-full px-6 py-3 border border-white text-white hover:bg-white/10 transition; }
+
+.nav-link { @apply text-sm font-light capitalize tracking-wide hover:opacity-100 opacity-90 transition text-white; }
+
+.heading-serif { font-family: var(--font-heading), ui-serif, Georgia, serif; }

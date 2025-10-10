@@ -3,7 +3,6 @@ import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { headers } from "next/headers";
-import WhatsAppFloat from "@/components/WhatsAppFloat";
 import TopRightLogo from "@/components/TopRightLogo";
 
 const heading = Playfair_Display({ subsets: ["latin"], variable: "--font-heading", weight: ["400","500","600","700","800","900"] });
@@ -30,7 +29,6 @@ export default async function RootLayout({
         </div>
         <Navbar />
         <TopRightLogo />
-        <WhatsAppFloat />
         {children}
       </body>
     </html>

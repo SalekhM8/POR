@@ -7,7 +7,7 @@ export default function StoryPage() {
   const [about, setAbout] = useState<About>(null);
   useEffect(() => {
     (async () => {
-      const res = await fetch("/api/about");
+      const res = await fetch("/api/about", { cache: "no-store" });
       if (res.ok) setAbout((await res.json()).about);
     })();
   }, []);

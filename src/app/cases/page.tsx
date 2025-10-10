@@ -8,7 +8,7 @@ export default function CasesPage() {
   const [open, setOpen] = useState<CaseStudy | null>(null);
   useEffect(() => {
     (async () => {
-      const res = await fetch("/api/case-studies");
+      const res = await fetch("/api/case-studies", { cache: "no-store" });
       if (res.ok) setCases((await res.json()).cases);
     })();
   }, []);

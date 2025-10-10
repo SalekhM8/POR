@@ -7,7 +7,7 @@ export default function TreatmentsPage() {
   const [packages, setPackages] = useState<Pkg[]>([]);
   useEffect(() => {
     (async () => {
-      const res = await fetch("/api/packages");
+      const res = await fetch("/api/packages", { cache: "no-store" });
       if (res.ok) setPackages((await res.json()).packages);
     })();
   }, []);

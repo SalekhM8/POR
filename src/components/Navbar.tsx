@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import type { Route } from "next";
-import logo from "../../public/POR-removebg-preview.png";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,30 +12,48 @@ export default function Navbar() {
     { href: "/cases", label: "Case studies" },
     { href: "/contact", label: "Contact us" },
   ];
+  const [open, setOpen] = useState(false);
+  if (pathname.startsWith("/admin")) return null;
   return (
-    <div className="fixed left-0 right-0 z-50 top-4 md:top-6">
-      <div className="relative flex flex-col items-center px-6 py-4 gap-3">
-        {/* Row with centered nav; desktop logo sits absolute on the left */}
-        <div className="relative w-full flex items-center justify-center">
-          <Link href="/" className="hidden md:inline-flex absolute left-6 top-1/2 -translate-y-1/2">
-            <Image src={logo} alt="Path of Refinement" className="h-20 md:h-24 w-auto select-none object-contain" priority />
-          </Link>
-          <nav className="flex items-center gap-8 bg-black/20 rounded-full px-6 py-2 backdrop-blur border border-white/10">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={`nav-link ${pathname === l.href ? "opacity-100" : "opacity-80"}`}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-        {/* Mobile: show centered logo under the nav */}
-        <Link href="/" className="md:hidden inline-flex items-center justify-center">
-          <Image src={logo} alt="Path of Refinement" className="h-20 w-auto select-none object-contain" priority />
+    <div className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+      <div className="mx-auto flex justify-center px-3 py-1.5 md:py-3">
+        <Link href="/admin" aria-label="Admin" className="fixed bottom-4 right-4 z-[70] group">
+          <div className="backdrop-blur bg-white/10 border border-white/15 rounded-full p-3 shadow-md opacity-80 group-hover:opacity-100 transition">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/90">
+              <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z"/>
+            </svg>
+          </div>
         </Link>
+        {/* Mobile hamburger on the right */}
+        <div className="md:hidden fixed top-4 right-4 z-[60]">
+          <div className="relative">
+            <button aria-label="Open menu" className="backdrop-blur bg-white/10 border border-white/15 rounded-full p-2.5 shadow-md" onClick={(e) => { e.preventDefault(); setOpen((v) => !v); }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/90">
+                <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round"/>
+              </svg>
+            </button>
+            {open && (
+              <div className="absolute right-0 mt-2 w-52 backdrop-blur bg-black/70 border border-white/15 rounded-xl p-2 shadow-lg">
+                {links.map((l) => (
+                  <Link key={l.href} href={l.href} className={`nav-link heading-serif block px-3 py-2 text-base interactive ${pathname === l.href ? "opacity-100" : "opacity-80"}`} onClick={() => setOpen(false)}>
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <nav className="hidden md:flex backdrop-blur bg-white/10 border border-white/15 rounded-full shadow-md items-center justify-center gap-6 md:gap-16 w-[min(90vw,820px)] px-6 md:px-10 py-2">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`nav-link text-sm md:text-base px-1 ${pathname === l.href ? "opacity-100" : "opacity-80"}`}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </div>
   );

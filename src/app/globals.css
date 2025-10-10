@@ -8,8 +8,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Align theme tokens with actual fonts loaded in RootLayout */
+  --font-sans: var(--font-body);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* Locked dark theme for video contrast */
@@ -25,8 +26,52 @@ html, body, #__next { height: 100%; }
 
 .text-shadow-soft { text-shadow: 0 2px 12px rgba(0,0,0,0.55); }
 
-.pill-button { @apply inline-flex items-center justify-center rounded-full px-6 py-3 border border-white text-white hover:bg-white/10 transition; }
+.pill-button {
+  font-family: var(--font-body), ui-sans-serif, system-ui;
+  @apply inline-flex items-center justify-center rounded-full px-8 py-3 border-2 border-white text-white transition font-semibold tracking-wide shadow-sm;
+}
+.pill-button:hover {
+  box-shadow: 0 0 25px rgba(255,255,255,0.35), 0 0 8px rgba(255,255,255,0.25) inset;
+  transform: translateZ(0) scale(1.04);
+  background: rgba(255,255,255,0.08);
+}
 
-.nav-link { @apply text-sm font-light capitalize tracking-wide hover:opacity-100 opacity-90 transition text-white; }
+.nav-link {
+  font-family: var(--font-body), ui-sans-serif, system-ui;
+  @apply text-base font-semibold capitalize tracking-wide hover:opacity-100 opacity-90 transition text-white;
+}
 
 .heading-serif { font-family: var(--font-heading), ui-serif, Georgia, serif; }
+
+/* Responsive crop for hero video to hide watermark while keeping composition */
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scaleX(0.80) scaleY(0.96);
+  clip-path: inset(0 0 0 0);
+  object-position: center top;
+}
+@media (min-width: 768px) {
+  .hero-video { clip-path: inset(0 0 0 0); object-position: center bottom; }
+}
+@media (min-width: 1024px) {
+  .hero-video { clip-path: inset(0 0 0 0); }
+}
+@media (min-width: 1280px) {
+  .hero-video { clip-path: inset(0 0 0 0); }
+}
+@media (min-width: 1536px) {
+  .hero-video { clip-path: inset(0 0 0 0); }
+}
+
+/* Touch interactive word glow */
+.word-touch { transition: transform 120ms ease, text-shadow 120ms ease; display: inline-block; margin-right: 0.12em; }
+.word-active { transform: scale(1.1); text-shadow: 0 0 12px rgba(255,255,255,0.55); }
+.interactive { transition: transform 120ms ease, text-shadow 120ms ease; }
+.interactive:active { transform: scale(1.08); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+/* Site-wide ultra-transparent hero backdrop, sticky across pages */
+.global-hero-backdrop { position: fixed; inset: 0; z-index: -10; pointer-events: none; }
+.global-hero-backdrop video { width: 100%; height: 100%; object-fit: cover; opacity: 0.18; }
+.global-hero-backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); }

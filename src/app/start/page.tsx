@@ -9,24 +9,39 @@ export default function StartPage() {
     name: string;
     email: string;
     phone: string;
-    treatment: string;
     message: string;
+    goals: string;
+    painAreas: string;
+    activityLevel: string;
+    injuries: string;
+    preferredTimes: string;
+    heardFrom: string;
   };
   const [values, setValues] = useState<FormValues>({
     name: "",
     email: "",
     phone: "",
-    treatment: "",
     message: "",
+    goals: "",
+    painAreas: "",
+    activityLevel: "",
+    injuries: "",
+    preferredTimes: "",
+    heardFrom: "",
   });
 
-  type Step = { key: keyof FormValues; label: string; type: "text" | "email" | "select" | "textarea" };
+  type Step = { key: keyof FormValues; label: string; type: "text" | "email" | "textarea" };
   const steps: Step[] = [
     { key: "name", label: "Your name", type: "text" },
     { key: "email", label: "Email", type: "email" },
     { key: "phone", label: "Phone (optional)", type: "text" },
-    { key: "treatment", label: "Treatment (optional)", type: "select" },
     { key: "message", label: "What are you seeking?", type: "textarea" },
+    { key: "goals", label: "Primary goals (mobility, pain relief, performance)", type: "textarea" },
+    { key: "painAreas", label: "Any pain/tight areas?", type: "textarea" },
+    { key: "activityLevel", label: "Weekly activity level (hours)", type: "text" },
+    { key: "injuries", label: "Past injuries/surgeries (if any)", type: "textarea" },
+    { key: "preferredTimes", label: "Preferred times (days/time windows)", type: "text" },
+    { key: "heardFrom", label: "How did you hear about us?", type: "text" },
   ];
 
   function update(key: keyof FormValues, val: string) {
@@ -39,12 +54,21 @@ export default function StartPage() {
     const formData = new FormData();
     Object.entries(values).forEach(([k, v]) => formData.append(k, v));
     formData.append("source", "start");
+    const answers = {
+      goals: values.goals,
+      painAreas: values.painAreas,
+      activityLevel: values.activityLevel,
+      injuries: values.injuries,
+      preferredTimes: values.preferredTimes,
+      heardFrom: values.heardFrom,
+    };
+    formData.append("answers", JSON.stringify(answers));
     const res = await fetch("/api/enquiry", { method: "POST", body: formData });
     setLoading(false);
     if (!res.ok) { setStatus("Something went wrong. Please try again."); return; }
     setStatus("Thanks! We'll be in touch shortly.");
     setStep(0);
-    setValues({ name: "", email: "", phone: "", treatment: "", message: "" });
+    setValues({ name: "", email: "", phone: "", message: "", goals: "", painAreas: "", activityLevel: "", injuries: "", preferredTimes: "", heardFrom: "" });
   }
 
   const current = steps[step];
@@ -63,18 +87,6 @@ export default function StartPage() {
               onChange={(e) => update(current.key, e.target.value)}
               className="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 placeholder-white/60 focus:outline-none"
             />
-          ) : current.type === "select" ? (
-            <select
-              value={values.treatment}
-              onChange={(e) => update("treatment", e.target.value)}
-              className="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-white"
-            >
-              <option value="" className="text-black">Select a treatment</option>
-              <option value="massage" className="text-black">Massage</option>
-              <option value="wet_cupping" className="text-black">Wet cupping</option>
-              <option value="dry_cupping" className="text-black">Dry cupping</option>
-              <option value="contrast" className="text-black">Cold plunge & sauna</option>
-            </select>
           ) : (
             <textarea
               rows={5}

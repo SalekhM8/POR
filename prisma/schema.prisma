@@ -19,4 +19,58 @@ model Enquiry {
   treatment  String?
   source     String
   createdAt  DateTime @default(now())
+  answers    Json?
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  features    Json?
+  priceCents  Int
+  durationMin Int
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookings    Booking[]
+}
+
+model CaseStudy {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  summary     String
+  content     String
+  coverUrl    String?
+  tags        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model About {
+  id        String   @id @default(cuid())
+  heading   String
+  content   String
+  heroUrl   String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  notes       String?
+  status      BookingStatus @default(pending)
+  package     Package       @relation(fields: [packageId], references: [id])
+  packageId   String
+  createdAt   DateTime      @default(now())
 }

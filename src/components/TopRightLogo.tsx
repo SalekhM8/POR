@@ -11,10 +11,10 @@ export default function TopRightLogo() {
       <Image
         src="/POR-removebg-preview.png"
         alt="Path of Refinement"
-        width={72}
-        height={72}
+        width={96}
+        height={96}
         priority
-        className="w-14 h-14 md:w-20 md:h-20 object-contain drop-shadow"
+        className="w-16 h-16 md:w-28 md:h-28 object-contain drop-shadow"
       />
     </Link>
   );

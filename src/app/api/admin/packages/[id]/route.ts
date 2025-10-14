@@ -10,10 +10,10 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (!isAdmin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
   const { id } = await ctx.params;
-  const { title, slug, description, features, priceCents, durationMin, imageUrl } = body || {};
+  const { title, slug, description, features, priceCents, durationMin, imageUrl, tier } = body || {};
   const updated = await prisma.package.update({
     where: { id },
-    data: { title, slug, description, features, priceCents, durationMin, imageUrl },
+    data: { title, slug, description, features, priceCents, durationMin, imageUrl, tier },
   });
   return NextResponse.json({ package: updated });
 }

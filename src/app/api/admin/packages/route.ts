@@ -25,6 +25,7 @@ export async function POST(req: Request) {
     priceCents,
     durationMin,
     imageUrl,
+    tier,
   } = body || {};
   if (!title || !slug || !description || typeof priceCents !== "number" || typeof durationMin !== "number") {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
       priceCents,
       durationMin,
       imageUrl,
+      tier,
     },
   });
   return NextResponse.json({ package: pkg });

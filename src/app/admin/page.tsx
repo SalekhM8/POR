@@ -211,6 +211,7 @@ export default function AdminPage() {
                   priceCents: Number(raw.priceCents || 0),
                   durationMin: Number(raw.durationMin || 0),
                   imageUrl: raw.imageUrl ? String(raw.imageUrl) : undefined,
+                  tier: raw.tier ? String(raw.tier) : undefined,
                 };
                 const res = await fetch('/api/admin/packages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (res.ok) {
@@ -227,6 +228,13 @@ export default function AdminPage() {
                 <textarea name="features" placeholder="Features (one per line)" className="md:col-span-2 bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <input name="priceCents" type="number" placeholder="Price (pence)" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <input name="durationMin" type="number" placeholder="Duration (min)" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
+                <select name="tier" className="bg-transparent border border-white/25 rounded-md px-3 py-2 text-white">
+                  <option value="" className="text-black">Tier (optional)</option>
+                  <option value="bronze" className="text-black">Bronze</option>
+                  <option value="silver" className="text-black">Silver</option>
+                  <option value="gold" className="text-black">Gold</option>
+                  <option value="platinum" className="text-black">Platinum</option>
+                </select>
                 <input name="imageUrl" placeholder="Image URL" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <button className="pill-button md:col-span-2 justify-center">Add package</button>
               </form>
@@ -353,10 +361,10 @@ export default function AdminPage() {
   );
 }
 
-type PackageForEdit = { id: string; title: string; description: string; features?: string[]; priceCents: number; durationMin: number; imageUrl?: string };
+type PackageForEdit = { id: string; title: string; description: string; features?: string[]; priceCents: number; durationMin: number; imageUrl?: string; tier?: string };
 function PackageCard({ pkg, onUpdated }: { pkg: PackageForEdit; onUpdated: (p: PackageForEdit)=>void }) {
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ title: pkg.title, description: pkg.description, features: (pkg.features||[]).join("\n"), priceCents: String(pkg.priceCents), durationMin: String(pkg.durationMin), imageUrl: pkg.imageUrl || "" });
+  const [form, setForm] = useState({ title: pkg.title, description: pkg.description, features: (pkg.features||[]).join("\n"), priceCents: String(pkg.priceCents), durationMin: String(pkg.durationMin), imageUrl: pkg.imageUrl || "", tier: pkg.tier || "" });
   async function save() {
     const payload = {
       title: form.title,
@@ -365,6 +373,7 @@ function PackageCard({ pkg, onUpdated }: { pkg: PackageForEdit; onUpdated: (p: P
       priceCents: Number(form.priceCents||0),
       durationMin: Number(form.durationMin||0),
       imageUrl: form.imageUrl || undefined,
+      tier: form.tier || undefined,
     };
     const res = await fetch(`/api/admin/packages/${pkg.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     if (res.ok) { const data = await res.json(); onUpdated(data.package); setEditing(false); }
@@ -396,7 +405,16 @@ function PackageCard({ pkg, onUpdated }: { pkg: PackageForEdit; onUpdated: (p: P
             <input value={form.priceCents} onChange={(e)=>setForm({...form, priceCents: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Price (pence)" />
             <input value={form.durationMin} onChange={(e)=>setForm({...form, durationMin: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Duration (min)" />
           </div>
-          <input value={form.imageUrl} onChange={(e)=>setForm({...form, imageUrl: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Image URL" />
+          <div className="grid grid-cols-2 gap-3">
+            <select value={form.tier} onChange={(e)=>setForm({...form, tier: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2 text-white">
+              <option value="" className="text-black">Tier (optional)</option>
+              <option value="bronze" className="text-black">Bronze</option>
+              <option value="silver" className="text-black">Silver</option>
+              <option value="gold" className="text-black">Gold</option>
+              <option value="platinum" className="text-black">Platinum</option>
+            </select>
+            <input value={form.imageUrl} onChange={(e)=>setForm({...form, imageUrl: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Image URL" />
+          </div>
           <div className="flex gap-2 justify-end">
             <button onClick={()=>setEditing(false)} className="pill-button px-5 py-2">Cancel</button>
             <button onClick={save} className="pill-button px-5 py-2">Save</button>

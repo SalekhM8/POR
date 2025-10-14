@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { Route } from "next";
 
 export default function Navbar() {
@@ -13,6 +13,8 @@ export default function Navbar() {
     { href: "/contact", label: "Contact us" },
   ];
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   if (pathname.startsWith("/admin")) return null;
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-transparent">
@@ -50,13 +52,25 @@ export default function Navbar() {
         </div>
         <nav className="hidden md:flex backdrop-blur bg-white/10 border border-white/15 rounded-full shadow-md items-center justify-center gap-6 md:gap-16 w-[min(90vw,920px)] px-6 md:px-10 py-2">
           <Link href="/story" className={`nav-link text-sm md:text-base px-1 ${pathname === "/story" ? "opacity-100" : "opacity-80"}`}>My story</Link>
-          {/* Desktop Services dropdown */}
-          <div className="relative group">
-            <Link href="/services" className={`nav-link text-sm md:text-base px-1 ${pathname.startsWith('/treatments') || pathname.startsWith('/training') ? 'opacity-100':'opacity-80'}`}>Services</Link>
-            <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-150 absolute left-1/2 -translate-x-1/2 mt-2 min-w-56 backdrop-blur bg-black/70 border border-white/15 rounded-xl p-2 shadow-lg">
-              <Link href="/treatments" className="nav-link block px-3 py-2">Treatments</Link>
-              <Link href="/training" className="nav-link block px-3 py-2">Personal Training</Link>
-            </div>
+          {/* Desktop Services dropdown - stateful so the menu doesn't disappear when moving cursor */}
+          <div
+            className="relative"
+            onMouseEnter={() => {
+              if (closeTimer.current) clearTimeout(closeTimer.current);
+              setServicesOpen(true);
+            }}
+            onMouseLeave={() => {
+              if (closeTimer.current) clearTimeout(closeTimer.current);
+              closeTimer.current = setTimeout(() => setServicesOpen(false), 120);
+            }}
+          >
+            <button type="button" className={`nav-link text-sm md:text-base px-1 ${pathname.startsWith('/treatments') || pathname.startsWith('/training') ? 'opacity-100':'opacity-80'}`}>Services</button>
+            {servicesOpen && (
+              <div className="absolute left-1/2 -translate-x-1/2 mt-2 min-w-56 backdrop-blur bg-black/70 border border-white/15 rounded-xl p-2 shadow-lg">
+                <Link href="/treatments" className="nav-link block px-3 py-2">Treatments</Link>
+                <Link href="/training" className="nav-link block px-3 py-2">Personal Training</Link>
+              </div>
+            )}
           </div>
           <Link href="/cases" className={`nav-link text-sm md:text-base px-1 ${pathname === "/cases" ? "opacity-100" : "opacity-80"}`}>Case studies</Link>
           <Link href="/contact" className={`nav-link text-sm md:text-base px-1 ${pathname === "/contact" ? "opacity-100" : "opacity-80"}`}>Contact us</Link>

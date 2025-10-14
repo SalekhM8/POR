@@ -208,7 +208,7 @@ export default function AdminPage() {
                   slug: String(raw.slug || ''),
                   description: String(raw.description || ''),
                   features: String(raw.features || '').split("\n").map(s => s.trim()).filter(Boolean),
-                  priceCents: Number(raw.priceCents || 0),
+                  priceCents: Math.round(Number((raw as any).price || 0) * 100),
                   durationMin: Number(raw.durationMin || 0),
                   imageUrl: raw.imageUrl ? String(raw.imageUrl) : undefined,
                   tier: raw.tier ? String(raw.tier) : undefined,
@@ -227,7 +227,10 @@ export default function AdminPage() {
                 <input name="slug" placeholder="Slug" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <textarea name="description" placeholder="Description" className="md:col-span-2 bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <textarea name="features" placeholder="Features (one per line)" className="md:col-span-2 bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
-                <input name="priceCents" type="number" placeholder="Price (pence)" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
+                <div className="flex items-center bg-transparent border border-white/25 rounded-md px-3 py-2">
+                  <span className="text-white/80 mr-2">£</span>
+                  <input name="price" type="number" step="0.01" placeholder="Price" className="bg-transparent w-full outline-none placeholder-white/60" />
+                </div>
                 <input name="durationMin" type="number" placeholder="Duration (min)" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <select name="tier" className="bg-transparent border border-white/25 rounded-md px-3 py-2 text-white">
                   <option value="" className="text-black">Tier (optional)</option>

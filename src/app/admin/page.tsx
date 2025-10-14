@@ -372,13 +372,13 @@ export default function AdminPage() {
 type PackageForEdit = { id: string; title: string; description: string; features?: string[]; priceCents: number; durationMin: number; imageUrl?: string; tier?: string };
 function PackageCard({ pkg, onUpdated }: { pkg: PackageForEdit; onUpdated: (p: PackageForEdit)=>void }) {
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ title: pkg.title, description: pkg.description, features: (pkg.features||[]).join("\n"), priceCents: String(pkg.priceCents), durationMin: String(pkg.durationMin), imageUrl: pkg.imageUrl || "", tier: pkg.tier || "" });
+  const [form, setForm] = useState({ title: pkg.title, description: pkg.description, features: (pkg.features||[]).join("\n"), price: (pkg.priceCents/100).toFixed(2), durationMin: String(pkg.durationMin), imageUrl: pkg.imageUrl || "", tier: pkg.tier || "" });
   async function save() {
     const payload = {
       title: form.title,
       description: form.description,
       features: form.features.split("\n").map(s=>s.trim()).filter(Boolean),
-      priceCents: Number(form.priceCents||0),
+      priceCents: Math.round((form.price ? Number(form.price) : 0) * 100),
       durationMin: Number(form.durationMin||0),
       imageUrl: form.imageUrl || undefined,
       tier: form.tier || undefined,
@@ -410,7 +410,10 @@ function PackageCard({ pkg, onUpdated }: { pkg: PackageForEdit; onUpdated: (p: P
           <textarea value={form.description} onChange={(e)=>setForm({...form, description: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" />
           <textarea value={form.features} onChange={(e)=>setForm({...form, features: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Features (one per line)" />
           <div className="grid grid-cols-2 gap-3">
-            <input value={form.priceCents} onChange={(e)=>setForm({...form, priceCents: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Price (pence)" />
+            <div className="flex items-center bg-transparent border border-white/25 rounded-md px-3 py-2">
+              <span className="text-white/80 mr-2">£</span>
+              <input value={form.price} onChange={(e)=>setForm({...form, price: e.target.value})} className="bg-transparent w-full outline-none" placeholder="Price" type="number" step="0.01" />
+            </div>
             <input value={form.durationMin} onChange={(e)=>setForm({...form, durationMin: e.target.value})} className="bg-transparent border border-white/25 rounded-md px-3 py-2" placeholder="Duration (min)" />
           </div>
           <div className="grid grid-cols-2 gap-3">

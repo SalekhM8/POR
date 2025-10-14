@@ -8,7 +8,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const links: { href: Route; label: string }[] = [
     { href: "/story", label: "My story" },
-    { href: "/treatments", label: "Treatments" },
+    { href: "/services", label: "Services" },
     { href: "/cases", label: "Case studies" },
     { href: "/contact", label: "Contact us" },
   ];
@@ -39,20 +39,27 @@ export default function Navbar() {
                     {l.label}
                   </Link>
                 ))}
+                {/* Services submenu for mobile */}
+                <div className="mt-1 border-t border-white/10 pt-1">
+                  <Link href="/treatments" className="nav-link heading-serif block px-3 py-2 text-base interactive opacity-80" onClick={() => setOpen(false)}>Treatments</Link>
+                  <Link href="/training" className="nav-link heading-serif block px-3 py-2 text-base interactive opacity-80" onClick={() => setOpen(false)}>Personal Training</Link>
+                </div>
               </div>
             )}
           </div>
         </div>
-        <nav className="hidden md:flex backdrop-blur bg-white/10 border border-white/15 rounded-full shadow-md items-center justify-center gap-6 md:gap-16 w-[min(90vw,820px)] px-6 md:px-10 py-2">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`nav-link text-sm md:text-base px-1 ${pathname === l.href ? "opacity-100" : "opacity-80"}`}
-            >
-              {l.label}
-            </Link>
-          ))}
+        <nav className="hidden md:flex backdrop-blur bg-white/10 border border-white/15 rounded-full shadow-md items-center justify-center gap-6 md:gap-16 w-[min(90vw,920px)] px-6 md:px-10 py-2">
+          <Link href="/story" className={`nav-link text-sm md:text-base px-1 ${pathname === "/story" ? "opacity-100" : "opacity-80"}`}>My story</Link>
+          {/* Desktop Services dropdown */}
+          <div className="relative group">
+            <Link href="/services" className={`nav-link text-sm md:text-base px-1 ${pathname.startsWith('/treatments') || pathname.startsWith('/training') ? 'opacity-100':'opacity-80'}`}>Services</Link>
+            <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-150 absolute left-1/2 -translate-x-1/2 mt-2 min-w-56 backdrop-blur bg-black/70 border border-white/15 rounded-xl p-2 shadow-lg">
+              <Link href="/treatments" className="nav-link block px-3 py-2">Treatments</Link>
+              <Link href="/training" className="nav-link block px-3 py-2">Personal Training</Link>
+            </div>
+          </div>
+          <Link href="/cases" className={`nav-link text-sm md:text-base px-1 ${pathname === "/cases" ? "opacity-100" : "opacity-80"}`}>Case studies</Link>
+          <Link href="/contact" className={`nav-link text-sm md:text-base px-1 ${pathname === "/contact" ? "opacity-100" : "opacity-80"}`}>Contact us</Link>
         </nav>
       </div>
     </div>

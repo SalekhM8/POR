@@ -32,6 +32,7 @@ model Package {
   durationMin Int
   imageUrl    String?
   tier        String? // bronze | silver | gold | platinum
+  category    String? // treatment | personal_training
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   bookings    Booking[]

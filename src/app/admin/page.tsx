@@ -212,6 +212,7 @@ export default function AdminPage() {
                   durationMin: Number(raw.durationMin || 0),
                   imageUrl: raw.imageUrl ? String(raw.imageUrl) : undefined,
                   tier: raw.tier ? String(raw.tier) : undefined,
+                  category: raw.category ? String(raw.category) : 'treatment',
                 };
                 const res = await fetch('/api/admin/packages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (res.ok) {
@@ -234,6 +235,10 @@ export default function AdminPage() {
                   <option value="silver" className="text-black">Silver</option>
                   <option value="gold" className="text-black">Gold</option>
                   <option value="platinum" className="text-black">Platinum</option>
+                </select>
+                <select name="category" className="bg-transparent border border-white/25 rounded-md px-3 py-2 text-white">
+                  <option value="treatment" className="text-black">Treatments</option>
+                  <option value="personal_training" className="text-black">Personal Training</option>
                 </select>
                 <input name="imageUrl" placeholder="Image URL" className="bg-transparent border border-white/25 rounded-md px-3 py-2 placeholder-white/60" />
                 <button className="pill-button md:col-span-2 justify-center">Add package</button>

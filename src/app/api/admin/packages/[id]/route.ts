@@ -13,7 +13,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   const { title, slug, description, features, priceCents, durationMin, imageUrl, tier, category } = body || {};
   const updated = await prisma.package.update({
     where: { id },
-    data: { title, slug, description, features, priceCents, durationMin, imageUrl, tier, category },
+    data: { title, slug, description, features, priceCents, durationMin, imageUrl, ...(tier ? { tier } : {}), ...(category ? { category } : {}) },
   });
   return NextResponse.json({ package: updated });
 }

@@ -40,8 +40,8 @@ export async function POST(req: Request) {
       priceCents,
       durationMin,
       imageUrl,
-      tier,
-      category,
+      ...(tier ? { tier } : {}),
+      ...(category ? { category } : {}),
     },
   });
   return NextResponse.json({ package: pkg });

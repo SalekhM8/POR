@@ -208,7 +208,7 @@ export default function AdminPage() {
                   slug: String(raw.slug || ''),
                   description: String(raw.description || ''),
                   features: String(raw.features || '').split("\n").map(s => s.trim()).filter(Boolean),
-                  priceCents: Math.round(Number((raw as any).price || 0) * 100),
+                  priceCents: Math.round((raw.price ? Number(String(raw.price)) : 0) * 100),
                   durationMin: Number(raw.durationMin || 0),
                   imageUrl: raw.imageUrl ? String(raw.imageUrl) : undefined,
                   tier: raw.tier ? String(raw.tier) : undefined,

@@ -5,10 +5,12 @@ type Pkg = { id: string; title: string; priceCents: number; durationMin: number;
 
 export default function TreatmentsPage() {
   const [packages, setPackages] = useState<Pkg[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/packages", { cache: "no-store" });
       if (res.ok) setPackages((await res.json()).packages);
+      setLoadingData(false);
     })();
   }, []);
   return (
@@ -16,6 +18,17 @@ export default function TreatmentsPage() {
       <section className="max-w-6xl mx-auto space-y-6">
         <h1 className="heading-serif text-5xl font-light">Treatments</h1>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loadingData && packages.length === 0 && (
+            <>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl border border-white/10 p-5">
+                  <div className="h-6 w-40 shimmer rounded" />
+                  <div className="mt-3 h-20 shimmer rounded" />
+                  <div className="mt-3 h-10 shimmer rounded" />
+                </div>
+              ))}
+            </>
+          )}
           {packages.map((p, i) => (
             <div key={p.id} className={`${p.tier === 'bronze' ? 'bg-[linear-gradient(135deg,#5a3b16,#3a250e)] border-[#b06b24]/40' : p.tier === 'silver' ? 'bg-[linear-gradient(135deg,#464a4d,#2b2e31)] border-[#c0c7cd]/40' : p.tier === 'gold' ? 'bg-[linear-gradient(135deg,#5c4a12,#3b300c)] border-[#d4af37]/40' : p.tier === 'platinum' ? 'bg-[linear-gradient(135deg,#51586b,#303543)] border-[#b0c4de]/40' : (i % 2 === 0 ? 'bg-gradient-to-br from-white/8 to-white/3' : 'bg-black/60')} rounded-2xl border p-5 shadow-[0_0_18px_rgba(255,255,255,0.08)]`}>
               <div className="flex items-center justify-between gap-3">

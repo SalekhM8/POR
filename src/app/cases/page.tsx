@@ -5,11 +5,13 @@ type CaseStudy = { id: string; title: string; summary: string; content?: string 
 
 export default function CasesPage() {
   const [cases, setCases] = useState<CaseStudy[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
   const [open, setOpen] = useState<CaseStudy | null>(null);
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/case-studies", { cache: "no-store" });
       if (res.ok) setCases((await res.json()).cases);
+      setLoadingData(false);
     })();
   }, []);
   return (
@@ -17,6 +19,16 @@ export default function CasesPage() {
       <section className="max-w-6xl mx-auto space-y-6">
         <h1 className="heading-serif text-5xl font-light">Case studies</h1>
         <div className="grid md:grid-cols-2 gap-6">
+          {loadingData && cases.length === 0 && (
+            <>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl border border-white/10 p-5">
+                  <div className="h-6 w-48 shimmer rounded" />
+                  <div className="mt-3 h-16 shimmer rounded" />
+                </div>
+              ))}
+            </>
+          )}
           {cases.map((c) => (
             <button key={c.id} onClick={() => setOpen(c)} className="text-left rounded-2xl border border-white/10 bg-gradient-to-br from-white/8 to-white/3 p-5 shadow-[0_0_18px_rgba(255,255,255,0.08)] hover:shadow-[0_0_28px_rgba(255,255,255,0.18)] transition transform hover:scale-[1.02] cursor-pointer">
               <h2 className="text-2xl font-semibold tracking-tight">{c.title}</h2>

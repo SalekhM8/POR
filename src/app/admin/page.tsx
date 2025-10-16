@@ -18,7 +18,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
-  const [tab, setTab] = useState<"enquiries" | "packages" | "cases" | "about" | "bookings">("enquiries");
+  const [tab, setTab] = useState<"enquiries" | "packages" | "cases" | "about" | "bookings" | "ai">("enquiries");
   type AdminPackage = { id: string; title: string; slug: string; description: string; features?: string[]; priceCents: number; durationMin: number };
   type AdminCase = { id: string; title: string; slug: string; summary: string; content?: string; coverUrl?: string | null; tags?: string[] | null };
   type AdminAbout = { id: string; heading: string; content: string; heroUrl?: string | null } | null;
@@ -119,6 +119,9 @@ export default function AdminPage() {
               ) },
               { key: "bookings", label: "Bookings", icon: (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 7V3h8v4"/><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 11h8"/></svg>
+              ) },
+              { key: "ai", label: "AI", icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 5h9a6 6 0 0 1 0 12H9l-4 3v-3a6 6 0 0 1-1-4V5z"/><path d="M13.5 7.5a3.5 3.5 0 1 0 0 7"/></svg>
               ) },
             ] as const).map((item) => (
               <button key={item.key} onClick={() => setTab(item.key)} className={`flex items-center gap-3 px-3 py-2 rounded-xl border transition ${tab===item.key ? "bg-white/15 border-white/20" : "bg-white/5 border-white/10 hover:bg-white/10"}`}>
@@ -361,6 +364,22 @@ export default function AdminPage() {
             </div>
           ))}
         </div>
+        )}
+
+        {tab === "ai" && (
+          <div className="grid gap-4">
+            <div className="border border-white/20 rounded-lg p-4">
+              <h2 className="text-xl mb-3">Virtual consultation</h2>
+              <div className="flex flex-wrap items-center gap-3">
+                <button onClick={async ()=>{
+                  const res = await fetch('/api/ai/reindex', { method: 'POST' });
+                  if (res.ok) { const j = await res.json(); alert(`Indexed ${j.chunks} chunks`); }
+                  else alert('Reindex failed');
+                }} className="pill-button px-5 py-2">Reindex content</button>
+                <span className="text-white/70 text-sm">Rebuilds AI knowledge from Packages and Case studies.</span>
+              </div>
+            </div>
+          </div>
         )}
             </div>
         </div>

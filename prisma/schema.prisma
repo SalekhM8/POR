@@ -76,3 +76,17 @@ model Booking {
   packageId   String
   createdAt   DateTime      @default(now())
 }
+
+// Lightweight RAG store without pgvector. Embeddings are persisted as JSON arrays.
+model AIChunk {
+  id        String   @id @default(cuid())
+  type      String   // "package" | "case"
+  sourceId  String
+  title     String
+  content   String
+  metadata  Json?
+  embedding Json     // number[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([type, sourceId])
+}

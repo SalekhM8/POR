@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import OpenAI from "openai";
 
 const prisma = new PrismaClient();
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 function cosineSim(a: number[], b: number[]) {
   let dot = 0, na = 0, nb = 0;
@@ -25,6 +24,7 @@ function normalize(text: string) { return text.trim().toLowerCase().replace(/\s+
 export async function POST(req: Request) {
   try {
     if (!process.env.OPENAI_API_KEY) return NextResponse.json({ error: "Missing OPENAI_API_KEY" }, { status: 500 });
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const body = await req.json().catch(() => ({}));
     const userText: string = String(body.message || "").slice(0, 4000);
     if (!userText) return NextResponse.json({ error: "Empty message" }, { status: 400 });

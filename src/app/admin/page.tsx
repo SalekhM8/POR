@@ -1,6 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
+
+// Shared types for this file
+type AdminPackage = { id: string; title: string; slug: string; description: string; features?: string[]; priceCents: number; durationMin: number };
+type AdminCase = { id: string; title: string; slug: string; summary: string; content?: string; coverUrl?: string | null; tags?: string[] | null };
+type AdminAbout = { id: string; heading: string; content: string; heroUrl?: string | null } | null;
+type AdminBooking = { id: string; name: string; email: string; phone?: string | null; status: string; createdAt: string; startTime?: string | null; endTime?: string | null; package?: { title: string } };
+type RecurringData = { id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string; endsOn?: string | null; reason?: string | null };
+type OneOffData = { id: string; start: string; end: string; reason?: string | null };
+
+declare global { interface Window { __SCHEDULE_RULES__?: unknown } }
 const adminSans = Inter({ subsets: ["latin"], variable: "--font-admin" });
 
 type Enquiry = {
@@ -19,19 +29,26 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [tab, setTab] = useState<"enquiries" | "packages" | "cases" | "about" | "bookings" | "timetable" | "ai">("enquiries");
-  type AdminPackage = { id: string; title: string; slug: string; description: string; features?: string[]; priceCents: number; durationMin: number };
-  type AdminCase = { id: string; title: string; slug: string; summary: string; content?: string; coverUrl?: string | null; tags?: string[] | null };
-  type AdminAbout = { id: string; heading: string; content: string; heroUrl?: string | null } | null;
-  type AdminBooking = { id: string; name: string; email: string; phone?: string | null; status: string; createdAt: string; startTime?: string | null; endTime?: string | null; package?: { title: string } };
   const [packages, setPackages] = useState<AdminPackage[]>([]);
   const [cases, setCases] = useState<AdminCase[]>([]);
   const [about, setAbout] = useState<AdminAbout>(null);
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [openBooking, setOpenBooking] = useState<AdminBooking | null>(null);
   const [openEnquiry, setOpenEnquiry] = useState<Enquiry | null>(null);
-  const [openBlock, setOpenBlock] = useState<{ type: 'recurring' | 'oneoff'; data: any } | null>(null);
+  type RecurringData = { id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string | null; endsOn?: string | null; reason?: string | null };
+  type OneOffData = { id: string; start: string; end: string; reason?: string | null };
+  const [openBlock, setOpenBlock] = useState<
+    | { type: 'recurring'; data: RecurringData }
+    | { type: 'oneoff'; data: OneOffData }
+    | null
+  >(null);
   const [schedule, setSchedule] = useState<{ rules: Array<{ id: string; weekday: number; startMinutes: number; endMinutes: number; isActive: boolean }>; recurring: Array<{ id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn: string; endsOn?: string | null; reason?: string | null }>; blocks: Array<{ id: string; start: string; end: string; reason?: string | null }> }>({ rules: [], recurring: [], blocks: [] });
-  const [modal, setModal] = useState<null | { type: "rule" | "recurring" | "block"; data?: any }>(null);
+  const [modal, setModal] = useState<
+    | null
+    | { type: "rule" }
+    | { type: "recurring"; data?: RecurringData }
+    | { type: "block"; data?: OneOffData }
+  >(null);
   const [weekStart, setWeekStart] = useState<Date>(() => {
     const now = new Date();
     const weekday = (now.getUTCDay() + 6) % 7; // Monday = 0
@@ -88,9 +105,7 @@ export default function AdminPage() {
       if (scheduleRes.ok) {
         const sched = await scheduleRes.json();
         setSchedule(sched);
-        if (typeof window !== 'undefined') {
-          (window as any).__SCHEDULE_RULES__ = sched.rules;
-        }
+        if (typeof window !== 'undefined') { window.__SCHEDULE_RULES__ = sched.rules; }
       }
     })();
   }, [authed]);
@@ -421,21 +436,21 @@ export default function AdminPage() {
               </div>
               {openBlock.type === 'recurring' ? (
                 <div className="grid gap-3 text-sm">
-                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Weekday</span><span className="text-white/90">{weekdayLabel(openBlock.data.weekday)}</span></div>
-                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Time</span><span className="text-white/90">{mm(openBlock.data.startMinutes)} – {mm(openBlock.data.endMinutes)}</span></div>
-                  {openBlock.data.reason && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Reason</span><span className="text-white/90">{openBlock.data.reason}</span></div>}
-                  {openBlock.data.startsOn && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Starts</span><span className="text-white/90">{new Date(openBlock.data.startsOn).toLocaleDateString()}</span></div>}
-                  {openBlock.data.endsOn && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Ends</span><span className="text-white/90">{new Date(openBlock.data.endsOn).toLocaleDateString()}</span></div>}
+                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Weekday</span><span className="text-white/90">{weekdayLabel((openBlock.data as RecurringData).weekday)}</span></div>
+                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Time</span><span className="text-white/90">{mm((openBlock.data as RecurringData).startMinutes)} – {mm((openBlock.data as RecurringData).endMinutes)}</span></div>
+                  {(openBlock.data as RecurringData).reason && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Reason</span><span className="text-white/90">{(openBlock.data as RecurringData).reason}</span></div>}
+                  {(openBlock.data as RecurringData).startsOn && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Starts</span><span className="text-white/90">{new Date((openBlock.data as RecurringData).startsOn as string).toLocaleDateString()}</span></div>}
+                  {(openBlock.data as RecurringData).endsOn && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Ends</span><span className="text-white/90">{new Date((openBlock.data as RecurringData).endsOn as string).toLocaleDateString()}</span></div>}
                 </div>
               ) : (
                 <div className="grid gap-3 text-sm">
-                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Start</span><span className="text-white/90">{new Date(openBlock.data.start).toLocaleString()}</span></div>
-                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">End</span><span className="text-white/90">{new Date(openBlock.data.end).toLocaleString()}</span></div>
-                  {openBlock.data.reason && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Reason</span><span className="text-white/90">{openBlock.data.reason}</span></div>}
+                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Start</span><span className="text-white/90">{new Date((openBlock.data as OneOffData).start).toLocaleString()}</span></div>
+                  <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">End</span><span className="text-white/90">{new Date((openBlock.data as OneOffData).end).toLocaleString()}</span></div>
+                  {(openBlock.data as OneOffData).reason && <div className="flex justify-between pb-2 border-b border-white/8"><span className="text-white/50">Reason</span><span className="text-white/90">{(openBlock.data as OneOffData).reason}</span></div>}
                 </div>
               )}
               <div className="mt-6 flex justify-end gap-3">
-                <button onClick={()=>{setOpenBlock(null); setModal({ type: openBlock.type==='recurring'?'recurring':'block', data: openBlock.data });}} className="pill-button px-5 py-2">Edit</button>
+                <button onClick={()=>{ setOpenBlock(null); if (openBlock.type==='recurring') { setModal({ type: 'recurring', data: openBlock.data as RecurringData }); } else { setModal({ type: 'block', data: openBlock.data as OneOffData }); } }} className="pill-button px-5 py-2">Edit</button>
                 <button onClick={async()=>{
                   const action = openBlock.type === 'recurring' ? 'delete_recurring' : 'delete_block';
                   await fetch('/api/admin/schedule', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, id: openBlock.data.id }) });
@@ -496,7 +511,7 @@ export default function AdminPage() {
                 <div className="absolute inset-0 bg-black/70" onClick={()=>setModal(null)} />
                 <div className={`relative ${modal.type==='rule' ? 'max-w-5xl' : 'max-w-lg'} w-full rounded-3xl border border-white/12 bg-black/95 p-8 shadow-2xl fade-in`}>
                   {modal.type === 'rule' && <ManageAvailabilityForm schedule={schedule} onClose={()=>{ setModal(null); reloadSchedule(); }} />}
-                  {modal.type === 'recurring' && <RecurringForm initial={modal.data} onClose={()=>{ setModal(null); reloadSchedule(); }} />}
+                  {modal.type === 'recurring' && <RecurringForm initial={modal.data ? (modal.data as RecurringData) : undefined} onClose={()=>{ setModal(null); reloadSchedule(); }} />}
                   {modal.type === 'block' && <BlockForm onClose={()=>{ setModal(null); reloadSchedule(); }} />}
                 </div>
               </div>
@@ -657,7 +672,7 @@ function ManageAvailabilityForm({ schedule, onClose }: { schedule: { rules: Arra
   );
 }
 
-function RecurringForm({ initial, onClose }: { initial?: { id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string; endsOn?: string | null; reason?: string | null }; onClose: () => void }) {
+function RecurringForm({ initial, onClose }: { initial?: { id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string | null; endsOn?: string | null; reason?: string | null }; onClose: () => void }) {
   const [form, setForm] = useState({ weekday: initial?.weekday ?? 1, startMinutes: initial?.startMinutes ?? 12*60, endMinutes: initial?.endMinutes ?? 14*60, startsOn: (initial?.startsOn ? initial.startsOn.slice(0,10) : ''), endsOn: (initial?.endsOn ? (initial.endsOn as string).slice(0,10) : ''), reason: initial?.reason ?? '' });
   return (
     <form className="grid gap-4" onSubmit={async (e)=>{ e.preventDefault(); const action = initial? 'update_recurring':'create_recurring'; const body = { action, ...(initial? { id: initial.id } : {}), weekday: form.weekday, startMinutes: form.startMinutes, endMinutes: form.endMinutes, startsOn: form.startsOn? `${form.startsOn}T00:00:00.000Z` : undefined, endsOn: form.endsOn? `${form.endsOn}T00:00:00.000Z` : undefined, reason: form.reason || undefined }; await fetch('/api/admin/schedule', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); onClose(); }}>

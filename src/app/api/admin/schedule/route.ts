@@ -77,7 +77,7 @@ export async function POST(req: Request) {
       const { weekly } = body as { weekly: Record<string, Array<{ startMinutes: number; endMinutes: number }>> };
       if (!weekly || typeof weekly !== 'object') return NextResponse.json({ error: 'weekly required' }, { status: 400 });
       const days = [0,1,2,3,4,5,6];
-      const tx: any[] = [];
+      const tx: Parameters<typeof prisma.$transaction>[0] = [] as any;
       tx.push(prisma.availabilityRule.deleteMany({}));
       for (const wd of days) {
         const blocks = weekly[String(wd)] || [];

@@ -4,12 +4,12 @@ import { useState } from "react";
 
 export default function VirtualConsultation() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [recs, setRecs] = useState<Array<{ id: string; title: string; price: string; durationMin: number }>>([]);
+  if (pathname.startsWith("/admin")) return null;
 
   async function send() {
     const text = input.trim();

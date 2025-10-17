@@ -13,6 +13,7 @@ async function main() {
     process.exit(1);
   }
   console.log('Seeding database...');
+  const now = new Date();
   // Clear existing (order matters due to FKs)
   await prisma.booking.deleteMany();
   await prisma.enquiry.deleteMany();

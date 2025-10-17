@@ -35,8 +35,7 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [openBooking, setOpenBooking] = useState<AdminBooking | null>(null);
   const [openEnquiry, setOpenEnquiry] = useState<Enquiry | null>(null);
-  type RecurringData = { id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string | null; endsOn?: string | null; reason?: string | null };
-  type OneOffData = { id: string; start: string; end: string; reason?: string | null };
+  // removed duplicate type aliases (defined at top of file)
   const [openBlock, setOpenBlock] = useState<
     | { type: 'recurring'; data: RecurringData }
     | { type: 'oneoff'; data: OneOffData }
@@ -500,8 +499,11 @@ export default function AdminPage() {
                 }}
                 bookings={bookings}
                 schedule={schedule}
-                onOpenBooking={(b)=>setOpenBooking(b as any)}
-                onOpenBlock={(type, data)=>setOpenBlock({ type, data })}
+                onOpenBooking={(b)=>setOpenBooking(b as AdminBooking)}
+                onOpenBlock={(type, data)=>{
+                  if (type === 'recurring') setOpenBlock({ type, data: data as RecurringData });
+                  else setOpenBlock({ type, data: data as OneOffData });
+                }}
               />
               
             </div>
@@ -630,7 +632,7 @@ function ManageAvailabilityForm({ schedule, onClose }: { schedule: { rules: Arra
   return (
     <div className="grid gap-6 max-h-[75vh] overflow-auto">
       <h3 className="heading-serif text-3xl font-normal">Manage availability</h3>
-      <p className="text-white/60 text-sm -mt-4">Set your weekly working hours. Toggle "Work day" on for days you want to accept bookings, then add one or more time ranges.</p>
+      <p className="text-white/60 text-sm -mt-4">Set your weekly working hours. Toggle &quot;Work day&quot; on for days you want to accept bookings, then add one or more time ranges.</p>
       <div className="grid md:grid-cols-3 gap-4">
         {days.map((label, wd)=> (
           <div key={wd} className="rounded-2xl border border-white/12 p-5 bg-white/5 min-w-[280px]">
@@ -779,7 +781,7 @@ function CaseCard({ data, onUpdated }: { data: { id: string; title: string; slug
 
 
 
-function CalendarWeek({ weekStart, onPrev, onNext, onToday, bookings, schedule, onOpenBooking, onOpenBlock }: { weekStart: Date; onPrev: () => void; onNext: () => void; onToday: () => void; bookings: Array<{ id: string; startTime?: string | null; endTime?: string | null; status: string; package?: { title: string } }>; schedule: { recurring: Array<{ id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string | null; endsOn?: string | null; reason?: string | null }>; blocks: Array<{ id: string; start: string; end: string; reason?: string | null }> }; onOpenBooking: (b: { id: string; startTime?: string | null; endTime?: string | null; status: string; package?: { title: string } }) => void; onOpenBlock: (type: 'recurring' | 'oneoff', data: any) => void }) {
+function CalendarWeek({ weekStart, onPrev, onNext, onToday, bookings, schedule, onOpenBooking, onOpenBlock }: { weekStart: Date; onPrev: () => void; onNext: () => void; onToday: () => void; bookings: Array<{ id: string; startTime?: string | null; endTime?: string | null; status: string; package?: { title: string } }>; schedule: { recurring: Array<{ id: string; weekday: number; startMinutes: number; endMinutes: number; startsOn?: string | null; endsOn?: string | null; reason?: string | null }>; blocks: Array<{ id: string; start: string; end: string; reason?: string | null }> }; onOpenBooking: (b: { id: string; startTime?: string | null; endTime?: string | null; status: string; package?: { title: string } }) => void; onOpenBlock: (type: 'recurring' | 'oneoff', data: RecurringData | OneOffData) => void }) {
   const days: Date[] = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
@@ -887,10 +889,10 @@ function CalendarWeek({ weekStart, onPrev, onNext, onToday, bookings, schedule, 
                   const segEnd = Math.min(ev.endMin, (h+1)*60);
                   const top = ((segStart - h*60) / 60) * 100;
                   const height = Math.max(6, ((segEnd - segStart) / 60) * 100);
-                  const wd = days[i].getDay();
-                  const rec = schedule.recurring.find(r => r.weekday === wd && r.startMinutes === ev.startMin && r.endMinutes === ev.endMin);
+                  const weekdayCandidate = days[i].getDay();
+                  const rec = schedule.recurring.find(r => r.weekday === weekdayCandidate && r.startMinutes === ev.startMin && r.endMinutes === ev.endMin);
                   return (
-                    <button key={`r-${idx}-${h}`} className="absolute left-1 right-1 rounded-md bg-amber-300/60 hover:bg-amber-200/70 transition cursor-pointer" style={{ top: `${top}%`, height: `${height}%` }} onClick={(e)=>{ e.stopPropagation(); if (rec) onOpenBlock('recurring', rec); }} />
+                    <button key={`r-${idx}-${h}`} className="absolute left-1 right-1 rounded-md bg-amber-300/60 hover:bg-amber-200/70 transition cursor-pointer" style={{ top: `${top}%`, height: `${height}%` }} onClick={(e)=>{ e.stopPropagation(); if (rec) onOpenBlock('recurring', { id: rec.id, weekday: rec.weekday, startMinutes: rec.startMinutes, endMinutes: rec.endMinutes, startsOn: rec.startsOn ?? undefined, endsOn: rec.endsOn ?? null, reason: rec.reason ?? null } as RecurringData); }} />
                   );
                 })}
               </div>

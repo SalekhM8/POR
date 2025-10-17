@@ -9,7 +9,7 @@ export default function ContactPage() {
           <p className="text-white/60 text-sm tracking-tight">Get in touch to start your journey</p>
         </div>
         <div className="matte-card p-8 fade-in">
-          <p className="text-white/70 text-sm leading-relaxed mb-6">Reach out for any questions or to book a consultation. We'll respond within 24 hours.</p>
+          <p className="text-white/70 text-sm leading-relaxed mb-6">Reach out for any questions or to book a consultation. We&apos;ll respond within 24 hours.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/start" className="pill-button">Start your journey</Link>
             <Link href="/admin" className="pill-button">Admin sign in</Link>

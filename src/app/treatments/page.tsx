@@ -117,8 +117,8 @@ export default function TreatmentsPage() {
                     setSelectedSlot("");
                     const res = await fetch(`/api/availability?date=${encodeURIComponent(selectedDate)}&packageId=${encodeURIComponent(activePkg.id)}`);
                     const j = res.ok ? await res.json() : { slots: [] };
-                    const unique = Array.from(new Map((j.slots||[]).map((s: { start: string; label: string })=>[s.start, s])).values())
-                      .sort((a: { start: string }, b: { start: string }) => a.start.localeCompare(b.start));
+                    const unique = Array.from(new Map(((j.slots||[]) as Array<{ start: string; label: string }>).map((s: { start: string; label: string })=>[s.start, s])).values()) as Array<{ start: string; label: string }>;
+                    unique.sort((a, b) => (a.start as string).localeCompare(b.start as string));
                     setSlots(unique);
                     setSlotsLoading(false);
                   }}>Load available times</button>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import OpenAI from "openai";
 
 const prisma = new PrismaClient();
@@ -34,7 +34,7 @@ export async function POST() {
   // Clear existing chunks to keep index fresh
   await prisma.aIChunk.deleteMany();
 
-  const toEmbed: { type: "package" | "case"; sourceId: string; title: string; content: string; metadata?: Record<string, unknown> }[] = [];
+  const toEmbed: { type: "package" | "case"; sourceId: string; title: string; content: string; metadata?: Prisma.InputJsonValue }[] = [];
   for (const p of packages) {
     const base = `${p.title}\n\n${p.description}\n\nFeatures: ${(Array.isArray(p.features) ? p.features : []).join(", ")}\nTier: ${p.tier ?? ""}\nCategory: ${p.category ?? ""}\nPrice(£): ${(p.priceCents/100).toFixed(2)}\nDuration(min): ${p.durationMin}`;
     for (const chunk of chunkText(base)) {
@@ -58,15 +58,15 @@ export async function POST() {
     res.data.forEach((row, j) => embeddings.push({ embedding: row.embedding as unknown as number[], idx: i + j }));
   }
 
-  const records = embeddings.map((e) => {
+  const records: Prisma.AIChunkCreateManyInput[] = embeddings.map((e) => {
     const src = toEmbed[e.idx];
     return {
       type: src.type,
       sourceId: src.sourceId,
       title: src.title,
       content: src.content,
-      metadata: src.metadata ?? {},
-      embedding: e.embedding as unknown as object,
+      metadata: (src.metadata ?? {}) as Prisma.InputJsonValue,
+      embedding: (e.embedding as unknown as number[]) as unknown as Prisma.InputJsonValue,
     };
   });
 

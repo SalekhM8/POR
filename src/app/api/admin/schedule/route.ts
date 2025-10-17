@@ -77,15 +77,16 @@ export async function POST(req: Request) {
       const { weekly } = body as { weekly: Record<string, Array<{ startMinutes: number; endMinutes: number }>> };
       if (!weekly || typeof weekly !== 'object') return NextResponse.json({ error: 'weekly required' }, { status: 400 });
       const days = [0,1,2,3,4,5,6];
-      const tx: Parameters<typeof prisma.$transaction>[0] = [] as any;
-      tx.push(prisma.availabilityRule.deleteMany({}));
+      const tx: Parameters<typeof prisma.$transaction>[0] = [] as unknown as Parameters<typeof prisma.$transaction>[0];
+      // We'll build tx as an array of Prisma promises
+      (tx as unknown as Promise<unknown>[]).push(prisma.availabilityRule.deleteMany({}));
       for (const wd of days) {
         const blocks = weekly[String(wd)] || [];
         for (const b of blocks) {
-          tx.push(prisma.availabilityRule.create({ data: { weekday: wd, startMinutes: Number(b.startMinutes), endMinutes: Number(b.endMinutes), isActive: true } }));
+          (tx as unknown as Promise<unknown>[]).push(prisma.availabilityRule.create({ data: { weekday: wd, startMinutes: Number(b.startMinutes), endMinutes: Number(b.endMinutes), isActive: true } }));
         }
       }
-      await prisma.$transaction(tx);
+      await prisma.$transaction(tx as unknown as Parameters<typeof prisma.$transaction>[0]);
       const after = await prisma.availabilityRule.findMany({ orderBy: { weekday: 'asc' } });
       return NextResponse.json({ rules: after });
     }

@@ -78,7 +78,7 @@ export default function StartPage() {
       <section className="max-w-xl mx-auto">
         <div className="fade-in mb-8">
           <h1 className="heading-serif text-5xl md:text-6xl font-normal mb-2">Start your journey</h1>
-          <p className="text-white/60 text-sm tracking-tight">Tell us about yourself and what you're looking for</p>
+          <p className="text-white/60 text-sm tracking-tight">Tell us about yourself and what you&apos;re looking for</p>
         </div>
 
         <div className="matte-card p-8 fade-in">

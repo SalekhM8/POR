@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import VirtualConsultation from "@/components/VirtualConsultation";
 
-const heading = Playfair_Display({ subsets: ["latin"], variable: "--font-heading", weight: ["400","500","600","700","800","900"] });
-const body = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-body" });
+const heading = DM_Serif_Display({ subsets: ["latin"], variable: "--font-heading", weight: ["400"] });
+const body = Inter({ subsets: ["latin"], variable: "--font-body", weight: ["300","400","500","600","700"] });
 
 export const metadata: Metadata = {
   title: "Wellness Bookings",

@@ -34,23 +34,23 @@ export default function Navbar() {
               </svg>
             </button>
             {open && (
-              <div className="absolute right-0 mt-2 w-52 backdrop-blur bg-black/70 border border-white/15 rounded-xl p-2 shadow-lg">
+              <div className="absolute right-0 mt-2 w-56 backdrop-blur-md bg-black/85 border border-white/12 rounded-2xl p-2 shadow-xl fade-in">
                 {links.map((l) => (
-                  <Link key={l.href} href={l.href} className={`nav-link heading-serif block px-3 py-2 text-base interactive ${pathname === l.href ? "opacity-100" : "opacity-80"}`} onClick={() => setOpen(false)}>
+                  <Link key={l.href} href={l.href} className={`nav-link block px-4 py-2.5 rounded-xl hover:bg-white/8 ${pathname === l.href ? "opacity-100 bg-white/5" : "opacity-80"}`} onClick={() => setOpen(false)}>
                     {l.label}
                   </Link>
                 ))}
                 {/* Services submenu for mobile */}
                 <div className="mt-1 border-t border-white/10 pt-1">
-                  <Link href="/treatments" className="nav-link heading-serif block px-3 py-2 text-base interactive opacity-80" onClick={() => setOpen(false)}>Treatments</Link>
-                  <Link href="/training" className="nav-link heading-serif block px-3 py-2 text-base interactive opacity-80" onClick={() => setOpen(false)}>Personal Training</Link>
+                  <Link href="/treatments" className="nav-link block px-4 py-2.5 rounded-xl hover:bg-white/8 opacity-80" onClick={() => setOpen(false)}>Treatments</Link>
+                  <Link href="/training" className="nav-link block px-4 py-2.5 rounded-xl hover:bg-white/8 opacity-80" onClick={() => setOpen(false)}>Personal Training</Link>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <nav className="hidden md:flex backdrop-blur bg-white/10 border border-white/15 rounded-full shadow-md items-center justify-center gap-6 md:gap-16 w-[min(90vw,920px)] px-6 md:px-10 py-2">
-          <Link href="/story" className={`nav-link text-sm md:text-base px-1 ${pathname === "/story" ? "opacity-100" : "opacity-80"}`}>My story</Link>
+        <nav className="hidden md:flex backdrop-blur-md bg-black/40 border border-white/12 rounded-full shadow-lg items-center justify-center gap-8 md:gap-12 w-[min(90vw,820px)] px-8 md:px-12 py-3">
+          <Link href="/story" className={`nav-link px-1 ${pathname === "/story" ? "opacity-100" : "opacity-80"}`}>My story</Link>
           {/* Desktop Services dropdown - stateful so the menu doesn't disappear when moving cursor */}
           <div
             className="relative"
@@ -63,16 +63,16 @@ export default function Navbar() {
               closeTimer.current = setTimeout(() => setServicesOpen(false), 120);
             }}
           >
-            <button type="button" className={`nav-link text-sm md:text-base px-1 ${pathname.startsWith('/treatments') || pathname.startsWith('/training') ? 'opacity-100':'opacity-80'}`}>Services</button>
+            <button type="button" className={`nav-link px-1 ${pathname.startsWith('/treatments') || pathname.startsWith('/training') ? 'opacity-100':'opacity-80'}`}>Services</button>
             {servicesOpen && (
-              <div className="absolute left-1/2 -translate-x-1/2 mt-2 min-w-56 backdrop-blur bg-black/70 border border-white/15 rounded-xl p-2 shadow-lg">
-                <Link href="/treatments" className="nav-link block px-3 py-2">Treatments</Link>
-                <Link href="/training" className="nav-link block px-3 py-2">Personal Training</Link>
+              <div className="absolute left-1/2 -translate-x-1/2 mt-3 min-w-56 backdrop-blur-md bg-black/80 border border-white/12 rounded-2xl p-2 shadow-xl fade-in">
+                <Link href="/treatments" className="nav-link block px-4 py-2.5 rounded-xl hover:bg-white/8">Treatments</Link>
+                <Link href="/training" className="nav-link block px-4 py-2.5 rounded-xl hover:bg-white/8">Personal Training</Link>
               </div>
             )}
           </div>
-          <Link href="/cases" className={`nav-link text-sm md:text-base px-1 ${pathname === "/cases" ? "opacity-100" : "opacity-80"}`}>Case studies</Link>
-          <Link href="/contact" className={`nav-link text-sm md:text-base px-1 ${pathname === "/contact" ? "opacity-100" : "opacity-80"}`}>Contact us</Link>
+          <Link href="/cases" className={`nav-link px-1 ${pathname === "/cases" ? "opacity-100" : "opacity-80"}`}>Case studies</Link>
+          <Link href="/contact" className={`nav-link px-1 ${pathname === "/contact" ? "opacity-100" : "opacity-80"}`}>Contact us</Link>
         </nav>
       </div>
     </div>

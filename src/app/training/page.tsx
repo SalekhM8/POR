@@ -14,23 +14,37 @@ export default function TrainingPage() {
       }
     })();
   }, []);
+  const tierAccent = (tier?: string) => {
+    const t = (tier || "").toLowerCase();
+    if (t === 'platinum') return 'border-l-4 border-l-blue-300/40';
+    if (t === 'gold') return 'border-l-4 border-l-yellow-300/40';
+    if (t === 'silver') return 'border-l-4 border-l-gray-300/40';
+    if (t === 'bronze') return 'border-l-4 border-l-orange-300/40';
+    return '';
+  };
   return (
-    <main className="min-h-screen text-white pt-24 px-6">
-      <section className="max-w-6xl mx-auto space-y-6">
-        <h1 className="heading-serif text-5xl font-light">Personal Training</h1>
+    <main className="min-h-screen text-white pt-24 px-6 pb-12">
+      <section className="max-w-7xl mx-auto space-y-8">
+        <div className="fade-in">
+          <h1 className="heading-serif text-5xl md:text-6xl font-normal mb-2">Personal Training</h1>
+          <p className="text-white/60 text-sm tracking-tight">Tailored sessions to build strength and performance</p>
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {packages.map((p) => (
-            <div key={p.id} className={`rounded-2xl border border-white/10 p-5 ${p.tier === 'bronze' ? 'bg-[linear-gradient(135deg,#5a3b16,#3a250e)]' : p.tier === 'silver' ? 'bg-[linear-gradient(135deg,#464a4d,#2b2e31)]' : p.tier === 'gold' ? 'bg-[linear-gradient(135deg,#5c4a12,#3b300c)]' : p.tier === 'platinum' ? 'bg-[linear-gradient(135deg,#51586b,#303543)]' : 'bg-gradient-to-br from-white/8 to-white/3'}`}>
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-xl font-semibold tracking-tight">{p.title}</h2>
-                <div className="text-white/85 text-sm font-medium">£{(p.priceCents/100).toFixed(2)} · {p.durationMin}m</div>
+          {packages.map((p, i) => (
+            <div key={p.id} className={`matte-card p-6 ${tierAccent(p.tier)} fade-in`} style={{ animationDelay: `${i*80}ms` }}>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <h2 className="text-xl font-semibold tracking-tight leading-tight">{p.title}</h2>
+                <div className="text-white/70 text-sm font-medium whitespace-nowrap">£{(p.priceCents/100).toFixed(2)}</div>
               </div>
-              <p className="text-white/80 mt-2 leading-relaxed">{p.description}</p>
+              <p className="text-white/70 text-sm leading-relaxed">{p.description}</p>
               {Array.isArray(p.features) && p.features.length>0 && (
-                <ul className="mt-3 space-y-1 text-white/75">
-                  {p.features.map((f: string, i: number) => <li key={i}>• {f}</li>)}
+                <ul className="mt-4 space-y-1.5 text-white/60 text-sm">
+                  {p.features.map((f: string, i: number) => <li key={i} className="flex items-start gap-2"><span className="text-white/40 mt-0.5">•</span><span>{f}</span></li>)}
                 </ul>
               )}
+              <div className="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+                <span className="text-white/50 text-xs">{p.durationMin} minutes</span>
+              </div>
             </div>
           ))}
         </div>

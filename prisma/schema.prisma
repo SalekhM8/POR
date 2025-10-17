@@ -74,6 +74,9 @@ model Booking {
   status      BookingStatus @default(pending)
   package     Package       @relation(fields: [packageId], references: [id])
   packageId   String
+  // Start and end times for the booked slot (including treatment duration)
+  startTime   DateTime?
+  endTime     DateTime?
   createdAt   DateTime      @default(now())
 }
 
@@ -89,4 +92,42 @@ model AIChunk {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([type, sourceId])
+}
+
+// Weekly recurring availability windows (e.g., Monday–Friday 09:00–17:00)
+model AvailabilityRule {
+  id               String   @id @default(cuid())
+  weekday          Int      // 0 = Sunday, 6 = Saturday
+  startMinutes     Int      // minutes from midnight (e.g., 9*60)
+  endMinutes       Int      // minutes from midnight (e.g., 17*60)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  @@index([weekday])
+}
+
+// One-off unavailability blocks (absolute times)
+model TimeBlock {
+  id        String   @id @default(cuid())
+  start     DateTime
+  end       DateTime
+  reason    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([start])
+  @@index([end])
+}
+
+// Weekly recurring unavailability (e.g., every Tue 12:00–14:00)
+model RecurringBlock {
+  id           String   @id @default(cuid())
+  weekday      Int      // 0 = Sunday, 6 = Saturday
+  startMinutes Int
+  endMinutes   Int
+  startsOn     DateTime @default(now())
+  endsOn       DateTime?
+  reason       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@index([weekday])
 }

@@ -74,55 +74,62 @@ export default function StartPage() {
   const current = steps[step];
 
   return (
-    <main className="min-h-screen text-white pt-24 px-6">
+    <main className="min-h-screen text-white pt-24 px-6 pb-12">
       <section className="max-w-xl mx-auto">
-        <h1 className="heading-serif text-5xl font-light mb-8">Start your journey</h1>
+        <div className="fade-in mb-8">
+          <h1 className="heading-serif text-5xl md:text-6xl font-normal mb-2">Start your journey</h1>
+          <p className="text-white/60 text-sm tracking-tight">Tell us about yourself and what you're looking for</p>
+        </div>
 
-        <div className="rounded-2xl border border-white/15 bg-black/30 backdrop-blur p-6">
-          <label className="block mb-2 text-white/90 heading-serif text-lg">{current.label}</label>
-          {current.type === "text" || current.type === "email" ? (
-            <input
-              type={current.type}
-              value={values[current.key]}
-              onChange={(e) => update(current.key, e.target.value)}
-              className="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 placeholder-white/60 focus:outline-none"
-            />
-          ) : (
-            <textarea
-              rows={5}
-              value={values.message}
-              onChange={(e) => update("message", e.target.value)}
-              className="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 placeholder-white/60 focus:outline-none"
-            />
-          )}
+        <div className="matte-card p-8 fade-in">
+          <div className="mb-6">
+            <label className="block mb-3 text-white/90 heading-serif text-xl">{current.label}</label>
+            {current.type === "text" || current.type === "email" ? (
+              <input
+                type={current.type}
+                value={values[current.key]}
+                onChange={(e) => update(current.key, e.target.value)}
+                className="input-field w-full"
+                placeholder={current.key === 'name' ? 'John Smith' : current.key === 'email' ? 'john@example.com' : ''}
+              />
+            ) : (
+              <textarea
+                rows={5}
+                value={values[current.key]}
+                onChange={(e) => update(current.key, e.target.value)}
+                className="input-field w-full resize-none"
+                placeholder="Share your thoughts..."
+              />
+            )}
+          </div>
 
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mb-4 flex gap-1.5">
+            {steps.map((_, i) => (
+              <span key={i} className={`h-1 rounded-full transition-all ${i <= step ? "bg-white" : "bg-white/20"}`} style={{ width: `${100 / steps.length}%` }} />
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
             <button
               onClick={() => setStep((s) => Math.max(0, s - 1))}
-              className="pill-button"
+              className="pill-button px-6 py-2"
               disabled={step === 0}
             >
               Back
             </button>
             {step < steps.length - 1 ? (
-              <button onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))} className="pill-button">
+              <button onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))} className="pill-button px-6 py-2">
                 Next
               </button>
             ) : (
-              <button onClick={submit} disabled={loading} className="pill-button">
+              <button onClick={submit} disabled={loading} className="pill-button px-6 py-2">
                 {loading ? "Sending..." : "Submit"}
               </button>
             )}
           </div>
-
-          <div className="mt-4 flex gap-2">
-            {steps.map((_, i) => (
-              <span key={i} className={`h-1 rounded-full ${i <= step ? "bg-white" : "bg-white/30"}`} style={{ width: `${100 / steps.length}%` }} />
-            ))}
-          </div>
         </div>
 
-        {status && <p className="mt-4 text-white/80">{status}</p>}
+        {status && <div className="mt-4 matte-card p-4 text-white/80 text-sm text-center fade-in">{status}</div>}
       </section>
     </main>
   );

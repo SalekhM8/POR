@@ -2,46 +2,73 @@
 
 :root {
   --background: #000000;
-  --foreground: #ededed;
+  --foreground: #fafafa;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-hover: rgba(255, 255, 255, 0.06);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* Align theme tokens with actual fonts loaded in RootLayout */
   --font-sans: var(--font-body);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
-
-/* Locked dark theme for video contrast */
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), ui-sans-serif, system-ui;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-/* Global helpers */
 html, body, #__next { height: 100%; }
 
-.text-shadow-soft { text-shadow: 0 2px 12px rgba(0,0,0,0.55); }
+.text-shadow-soft { text-shadow: 0 2px 16px rgba(0,0,0,0.6); }
 
 .pill-button {
   font-family: var(--font-body), ui-sans-serif, system-ui;
-  @apply inline-flex items-center justify-center rounded-full px-8 py-3 border-2 border-white text-white transition font-semibold tracking-wide shadow-sm;
+  @apply inline-flex items-center justify-center rounded-full px-7 py-2.5 border border-white/25 text-white transition-all font-medium tracking-tight cursor-pointer;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
 }
-.pill-button:hover {
-  box-shadow: 0 0 25px rgba(255,255,255,0.35), 0 0 8px rgba(255,255,255,0.25) inset;
-  transform: translateZ(0) scale(1.04);
-  background: rgba(255,255,255,0.08);
+.pill-button:hover:not(:disabled) {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255,255,255,0.12);
+}
+.pill-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .nav-link {
   font-family: var(--font-body), ui-sans-serif, system-ui;
-  @apply text-base font-semibold capitalize tracking-wide hover:opacity-100 opacity-90 transition text-white;
+  @apply text-sm font-medium tracking-tight hover:opacity-100 opacity-85 transition-all text-white cursor-pointer;
 }
 
-.heading-serif { font-family: var(--font-heading), ui-serif, Georgia, serif; }
+.heading-serif { 
+  font-family: var(--font-heading), ui-serif, Georgia, serif; 
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Matte card style */
+.matte-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  transition: all 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.matte-card:hover {
+  background: var(--card-hover);
+  border-color: rgba(255,255,255,0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
 
 /* Responsive crop for hero video to hide watermark while keeping composition */
 .hero-video {
@@ -77,6 +104,25 @@ html, body, #__next { height: 100%; }
 .global-hero-backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); }
 
 /* Skeleton shimmer */
-.shimmer { position: relative; overflow: hidden; background: rgba(255,255,255,0.06); }
-.shimmer::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); animation: shimmer 1.1s infinite; }
+.shimmer { position: relative; overflow: hidden; background: rgba(255,255,255,0.04); }
+.shimmer::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent); animation: shimmer 1.4s infinite ease-in-out; }
 @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Input styles */
+.input-field {
+  @apply bg-black/30 backdrop-blur-sm border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 transition-all;
+}
+.input-field:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+}

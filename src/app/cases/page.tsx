@@ -15,38 +15,41 @@ export default function CasesPage() {
     })();
   }, []);
   return (
-    <main className="min-h-screen text-white pt-24 px-6">
-      <section className="max-w-6xl mx-auto space-y-6">
-        <h1 className="heading-serif text-5xl font-light">Case studies</h1>
+    <main className="min-h-screen text-white pt-24 px-6 pb-12">
+      <section className="max-w-6xl mx-auto space-y-8">
+        <div className="fade-in">
+          <h1 className="heading-serif text-5xl md:text-6xl font-normal mb-2">Case studies</h1>
+          <p className="text-white/60 text-sm tracking-tight">Real transformations and recovery journeys</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-6">
           {loadingData && cases.length === 0 && (
             <>
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-2xl border border-white/10 p-5">
+                <div key={i} className="matte-card p-6 fade-in" style={{ animationDelay: `${i*80}ms` }}>
                   <div className="h-6 w-48 shimmer rounded" />
-                  <div className="mt-3 h-16 shimmer rounded" />
+                  <div className="mt-4 h-16 shimmer rounded" />
                 </div>
               ))}
             </>
           )}
-          {cases.map((c) => (
-            <button key={c.id} onClick={() => setOpen(c)} className="text-left rounded-2xl border border-white/10 bg-gradient-to-br from-white/8 to-white/3 p-5 shadow-[0_0_18px_rgba(255,255,255,0.08)] hover:shadow-[0_0_28px_rgba(255,255,255,0.18)] transition transform hover:scale-[1.02] cursor-pointer">
-              <h2 className="text-2xl font-semibold tracking-tight">{c.title}</h2>
-              <p className="text-white/80 mt-2 leading-relaxed">{c.summary}</p>
+          {cases.map((c, i) => (
+            <button key={c.id} onClick={() => setOpen(c)} className="text-left matte-card p-6 cursor-pointer fade-in" style={{ animationDelay: `${i*80}ms` }}>
+              <h2 className="text-xl font-semibold tracking-tight leading-tight">{c.title}</h2>
+              <p className="text-white/70 text-sm leading-relaxed mt-3">{c.summary}</p>
             </button>
           ))}
         </div>
 
         {open && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-            <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(null)} />
-            <div className="relative max-w-2xl w-full rounded-2xl border border-white/15 bg-black/90 p-6">
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-2xl font-semibold">{open.title}</h3>
-                <button onClick={() => setOpen(null)} className="pill-button px-4 py-1">Close</button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-black/70" onClick={() => setOpen(null)} />
+            <div className="relative max-w-2xl w-full rounded-3xl border border-white/12 bg-black/95 p-8 shadow-2xl fade-in">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <h3 className="heading-serif text-3xl font-normal">{open.title}</h3>
+                <button onClick={() => setOpen(null)} className="pill-button px-4 py-2 text-sm">Close</button>
               </div>
-              <p className="text-white/80 mt-3">{open.summary}</p>
-              {open.content && <div className="text-white/80 whitespace-pre-wrap mt-4">{open.content}</div>}
+              <p className="text-white/70 text-sm leading-relaxed">{open.summary}</p>
+              {open.content && <div className="text-white/65 text-sm leading-relaxed whitespace-pre-wrap mt-4">{open.content}</div>}
             </div>
           </div>
         )}

@@ -62,34 +62,41 @@ export default function VirtualConsultation() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[96]">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <div className="absolute right-4 bottom-24 md:right-6 md:bottom-28 w-[min(92vw,560px)] rounded-3xl border border-white/15 backdrop-blur bg-black/60 shadow-[0_0_32px_rgba(255,255,255,0.12)]">
-            <div className="p-4 md:p-5">
-              <div className="text-white/90 heading-serif text-xl">Virtual consultation</div>
-              <div className="mt-3 max-h-[46vh] overflow-auto space-y-2 pr-1">
+        <div className="fixed inset-0 z-[96] backdrop-blur-sm">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+          <div className="absolute right-4 bottom-24 md:right-6 md:bottom-28 w-[min(92vw,540px)] rounded-3xl border border-white/12 backdrop-blur-md bg-black/90 shadow-2xl fade-in">
+            <div className="p-5 md:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="heading-serif text-2xl font-normal">Virtual consultation</h3>
+                <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white transition">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <div className="max-h-[48vh] overflow-auto space-y-3 pr-1 mb-4">
                 {messages.map((m, i) => (
-                  <div key={i} className={`max-w-[88%] text-sm leading-relaxed rounded-2xl px-3 py-2 ${m.role === "user" ? "ml-auto bg-white/10 text-white" : "mr-auto bg-white/5 text-white/90"}`}>
+                  <div key={i} className={`max-w-[86%] text-sm leading-relaxed rounded-2xl px-4 py-2.5 fade-in ${m.role === "user" ? "ml-auto bg-white/12 text-white border border-white/10" : "mr-auto bg-white/5 text-white/85 border border-white/8"}`} style={{ animationDelay: `${i*60}ms` }}>
                     {m.content}
                   </div>
                 ))}
-                {loading && <div className="text-white/70 text-sm">Thinking…</div>}
+                {loading && <div className="text-white/60 text-sm px-4">Thinking…</div>}
               </div>
               {recs.length > 0 && (
-                <div className="mt-4 grid gap-2">
+                <div className="mb-4 grid gap-2">
                   {recs.map((r) => (
-                    <a key={r.id} href="/treatments" className="block rounded-xl border border-white/15 bg-white/5 p-3 hover:bg-white/10 transition">
+                    <a key={r.id} href="/treatments" className="block matte-card p-4 hover:scale-[1.01] transition-all">
                       <div className="flex items-center justify-between">
-                        <div className="font-semibold">{r.title}</div>
-                        <div className="text-white/80 text-sm">£{r.price} · {r.durationMin}m</div>
+                        <div className="font-medium text-sm">{r.title}</div>
+                        <div className="text-white/70 text-xs">£{r.price} · {r.durationMin}m</div>
                       </div>
                     </a>
                   ))}
                 </div>
               )}
-              <div className="mt-4 flex gap-2">
-                <input value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={(e)=>{if(e.key==='Enter'){e.preventDefault();send();}}} placeholder="Tell me what you’re experiencing" className="flex-1 bg-transparent border border-white/30 rounded-xl px-3 py-2 text-white placeholder-white/60" />
-                <button onClick={send} disabled={loading} className="pill-button px-5 py-2">Send</button>
+              <div className="flex gap-2">
+                <input value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={(e)=>{if(e.key==='Enter' && !e.shiftKey){e.preventDefault();send();}}} placeholder="Describe what you're experiencing..." className="input-field flex-1" />
+                <button onClick={send} disabled={loading} className="pill-button px-5 py-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
               </div>
             </div>
           </div>

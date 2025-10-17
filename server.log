@@ -1,0 +1,51 @@
+
+> wellness-bookings@0.1.0 dev
+> next dev --turbopack
+
+ ⚠ Port 3000 is in use by process 13579, using available port 3005 instead.
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.1.112:3005
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Compiled middleware in 71ms
+ ✓ Ready in 946ms
+ ○ Compiling /api/packages ...
+ ✓ Compiled /api/packages in 803ms
+Error [PrismaClientInitializationError]: 
+Invalid `prisma.package.findMany()` invocation in
+/Users/salekhmahmood/Path/wellness-bookings/.next/server/chunks/[root-of-the-server]__3c140cd6._.js:72:43
+
+  69 ;
+  70 const prisma = new __TURBOPACK__imported__module__$5b$externals$5d2f40$prisma$2f$client__$5b$external$5d$__$2840$prisma$2f$client$2c$__cjs$29$__["PrismaClient"]();
+  71 async function GET() {
+→ 72     const packages = await prisma.package.findMany(
+error: Error validating datasource `db`: the URL must start with the protocol `file:`.
+  -->  schema.prisma:10
+   | 
+ 9 |   provider = "sqlite"
+10 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (src/app/api/packages/route.ts:7:41)
+    at <unknown> (-->  schema.prisma:10)
+    at async GET (src/app/api/packages/route.ts:7:20)
+   5 |
+   6 | export async function GET() {
+>  7 |   const packages = await prisma.package.findMany({ orderBy: { priceCents: "asc" } });
+     |                                         ^
+   8 |   return NextResponse.json({ packages });
+   9 | }
+  10 | {
+  clientVersion: '6.16.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+ GET /api/packages 500 in 1529ms
+ ✓ Compiled middleware in 3ms
+ ✓ Compiled middleware in 2ms
+ ✓ Compiled middleware in 1ms
+ ✓ Compiled middleware in 19ms
+ ✓ Compiled middleware in 32ms

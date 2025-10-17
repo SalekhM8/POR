@@ -4,6 +4,14 @@ const prisma = new PrismaClient();
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 async function main() {
+  // Safety guard: prevent accidental seeding of remote/prod DBs unless explicitly allowed
+  const dbUrl = process.env.DATABASE_URL || "";
+  const isRemote = dbUrl && !dbUrl.includes("localhost") && !dbUrl.includes("127.0.0.1");
+  const allowRemoteSeed = process.env.ALLOW_SEED_REMOTE === "1";
+  if (isRemote && !allowRemoteSeed) {
+    console.error("Refusing to seed non-local database. Set ALLOW_SEED_REMOTE=1 if you are sure.");
+    process.exit(1);
+  }
   console.log('Seeding database...');
   // Clear existing (order matters due to FKs)
   await prisma.booking.deleteMany();
@@ -11,6 +19,9 @@ async function main() {
   await prisma.caseStudy.deleteMany();
   await prisma.package.deleteMany();
   await prisma.about.deleteMany();
+  await prisma.timeBlock.deleteMany();
+  await prisma.recurringBlock.deleteMany();
+  await prisma.availabilityRule.deleteMany();
 
   // About
   const about = await prisma.about.create({
@@ -71,6 +82,15 @@ async function main() {
     caseStudies.push(created);
   }
 
+  // Scheduling: 24/7 availability with permanent midnight–5am recurring block, no other blocks
+  const allWeek = [0,1,2,3,4,5,6];
+  for (const wd of allWeek) {
+    await prisma.availabilityRule.create({ data: { weekday: wd, startMinutes: 0, endMinutes: 24*60, isActive: true } });
+  }
+  for (const wd of allWeek) {
+    await prisma.recurringBlock.create({ data: { weekday: wd, startMinutes: 0, endMinutes: 5*60, reason: 'Night closed' } });
+  }
+
   // Enquiries (clear and add 5 well-answered)
   await prisma.enquiry.deleteMany();
   const baseAnswers = (o) => ({ goals: o.goals, painAreas: o.painAreas, activityLevel: o.activityLevel, injuries: o.injuries, preferredTimes: o.preferredTimes, location: o.location, heardFrom: o.heardFrom });
@@ -89,7 +109,14 @@ async function main() {
   const statuses = ['pending', 'confirmed', 'cancelled'];
   for (let i = 0; i < 12; i++) {
     const pkg = pick(packages);
-    await prisma.booking.create({ data: { name: `Client ${i + 1}`, email: `client${i + 1}@example.com`, phone: Math.random() > 0.5 ? `07${Math.floor(100000000 + Math.random() * 899999999)}` : null, notes: Math.random() > 0.5 ? 'Prefer evenings after 6pm' : null, status: pick(statuses), packageId: pkg.id } });
+    // Seed with some time-based bookings next week to demonstrate slot blocking
+    const baseDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 7 + (i % 5), 0, 0, 0, 0));
+    const startMinutes = 9*60 + (i % 6) * 45; // staggered within the day
+    const start = new Date(baseDay);
+    start.setUTCMinutes(startMinutes);
+    const end = new Date(start);
+    end.setUTCMinutes(startMinutes + pkg.durationMin);
+    await prisma.booking.create({ data: { name: `Client ${i + 1}`, email: `client${i + 1}@example.com`, phone: Math.random() > 0.5 ? `07${Math.floor(100000000 + Math.random() * 899999999)}` : null, notes: Math.random() > 0.5 ? 'Prefer evenings after 6pm' : null, status: pick(statuses), packageId: pkg.id, startTime: start, endTime: end } });
   }
 
   console.log('Seed complete.');

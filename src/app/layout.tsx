@@ -3,6 +3,7 @@ import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import VirtualConsultation from "@/components/VirtualConsultation";
+import TopRightLogo from "@/components/TopRightLogo";
 
 const heading = DM_Serif_Display({ subsets: ["latin"], variable: "--font-heading", weight: ["400"] });
 const body = Inter({ subsets: ["latin"], variable: "--font-body", weight: ["300","400","500","600","700"] });
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${heading.variable} ${body.variable} antialiased bg-black`}> 
         <Navbar />
+        <TopRightLogo />
         <VirtualConsultation />
         {children}
       </body>

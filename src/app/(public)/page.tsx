@@ -63,17 +63,26 @@ export default function Home() {
           {/* SUBJECT FOREGROUND (transparent PNG) */}
           <Image src="/trueHERO.png" alt="Hero Subject" fill priority className="object-contain object-top pointer-events-none z-10" />
 
-          {/* Text left, CTA right — vertically centered */}
+          {/* Headline and CTAs — vertically centered */}
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-4 z-20 select-none">
-            <div className="flex items-center justify-between gap-3 pr-2">
-              <p className="heading-serif text-white/95 text-xl leading-snug max-w-[62%] select-none [word-spacing:0.02em]">
+            <div className="pr-2">
+              <p className="heading-serif text-white/95 text-xl leading-snug max-w-[88%] select-none [word-spacing:0.02em] mb-3">
                 <span>Make the </span>
                 <em className="italic">best</em>
                 <span>{" decision for your "}</span>
                 <em className="italic">future</em>
                 <span>{" self"}</span>
               </p>
-              <Link href="/start" className="pill-button text-sm px-3 py-1.5 whitespace-nowrap shrink-0 interactive">Start your journey</Link>
+              <div className="flex flex-col xs:flex-row gap-2">
+                <Link href="/start" className="pill-button text-sm px-3 py-1.5 whitespace-nowrap interactive">Start your journey</Link>
+                <button
+                  type="button"
+                  className="pill-button text-sm px-3 py-1.5 whitespace-nowrap interactive"
+                  onClick={()=>{ (document.querySelector('[aria-label="Virtual consultation"]') as HTMLButtonElement)?.click(); }}
+                >
+                  Virtual consultation
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -105,8 +114,15 @@ export default function Home() {
             <br />
             for your <em className="heading-serif italic inline-block align-baseline text-[1.04em] md:text-[1.06em]">future</em> self
           </p>
-          <div className="mt-3 md:mt-4">
-            <Link href="/start" className="pill-button text-lg md:text-xl px-10 py-4 md:px-12 md:py-5">Start your journey</Link>
+          <div className="mt-3 md:mt-4 flex items-center justify-center gap-3">
+            <Link href="/start" className="pill-button text-lg md:text-xl px-8 py-4 md:px-10 md:py-5">Start your journey</Link>
+            <button
+              type="button"
+              className="pill-button text-lg md:text-xl px-8 py-4 md:px-10 md:py-5"
+              onClick={()=>{ (document.querySelector('[aria-label=\"Virtual consultation\"]') as HTMLButtonElement)?.click(); }}
+            >
+              Virtual consultation
+            </button>
           </div>
         </div>
         </div>

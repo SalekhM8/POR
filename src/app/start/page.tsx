@@ -79,6 +79,9 @@ export default function StartPage() {
         <div className="fade-in mb-8">
           <h1 className="heading-serif text-5xl md:text-6xl font-normal mb-2">Start your journey</h1>
           <p className="text-white/60 text-sm tracking-tight">Tell us about yourself and what you&apos;re looking for</p>
+          <div className="mt-4 flex gap-3">
+            <a href="#virtual-consult" className="pill-button px-6 py-2">Virtual consultation</a>
+          </div>
         </div>
 
         <div className="matte-card p-8 fade-in">
@@ -130,6 +133,11 @@ export default function StartPage() {
         </div>
 
         {status && <div className="mt-4 matte-card p-4 text-white/80 text-sm text-center fade-in">{status}</div>}
+        <div id="virtual-consult" className="mt-10 matte-card p-6">
+          <h2 className="heading-serif text-2xl mb-2">Prefer a quick virtual consult?</h2>
+          <p className="text-white/70 text-sm mb-4">Chat with the assistant to get tailored recommendations before you submit the form.</p>
+          <button onClick={()=>{ (document.querySelector('[aria-label="Virtual consultation"]') as HTMLButtonElement)?.click(); }} className="pill-button px-6 py-2">Open virtual consultation</button>
+        </div>
       </section>
     </main>
   );

@@ -9,7 +9,8 @@ export default function VideoBackdrop({ src }: { src: string }) {
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
+        loading="lazy"
       >
         <source src={src} type="video/mp4" />
       </video>
@@ -17,6 +18,7 @@ export default function VideoBackdrop({ src }: { src: string }) {
     </div>
   );
 }
+
 
 
 

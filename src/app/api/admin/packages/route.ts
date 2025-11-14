@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { clearCache } from "@/lib/cache";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -44,6 +43,7 @@ export async function POST(req: Request) {
       ...(category ? { category } : {}),
     },
   });
+  clearCache('packages'); // Invalidate packages cache
   return NextResponse.json({ package: pkg });
 }
 

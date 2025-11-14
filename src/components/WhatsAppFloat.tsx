@@ -20,7 +20,9 @@ export default function WhatsAppFloat() {
         right: `calc(env(safe-area-inset-right, 0px) + 76px)`,
       }}
     >
-      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width={48} height={48} alt="WhatsApp" className="drop-shadow" />
+      <div className="backdrop-blur-xl bg-white/8 border border-white/15 rounded-full p-2 shadow-lg transition-all group-hover:bg-white/12">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width={36} height={36} alt="WhatsApp" className="drop-shadow" />
+      </div>
     </a>
   );
 }

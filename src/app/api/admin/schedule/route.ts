@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 function requireAdmin(cookieStore: Awaited<ReturnType<typeof cookies>>) {
   const isAdmin = cookieStore.get("admin")?.value === "1";

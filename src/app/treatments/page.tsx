@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 type Pkg = { id: string; title: string; priceCents: number; durationMin: number; description: string; features?: string[]; tier?: string };
 
@@ -22,14 +22,14 @@ export default function TreatmentsPage() {
       setLoadingData(false);
     })();
   }, []);
-  const tierAccent = (tier?: string) => {
+  const tierAccent = useMemo(() => (tier?: string) => {
     const t = (tier || "").toLowerCase();
     if (t === 'platinum') return 'border-l-4 border-l-blue-300/40';
     if (t === 'gold') return 'border-l-4 border-l-yellow-300/40';
     if (t === 'silver') return 'border-l-4 border-l-gray-300/40';
     if (t === 'bronze') return 'border-l-4 border-l-orange-300/40';
     return '';
-  };
+  }, []);
   return (
     <main className="min-h-screen text-white pt-24 px-6 pb-12">
       <section className="max-w-7xl mx-auto space-y-8">

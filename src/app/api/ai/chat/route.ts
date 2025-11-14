@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import OpenAI from "openai";
-
-const prisma = new PrismaClient();
 
 function cosineSim(a: number[], b: number[]) {
   let dot = 0, na = 0, nb = 0;
@@ -38,9 +36,9 @@ export async function POST(req: Request) {
       setCachedEmbedding(norm, qvec);
     }
 
-    // Pull a reasonable number of chunks from DB and rank in app (since we store JSON embeddings)
+    // Pull a smaller pool of chunks for faster processing (reduced from 200 to 100)
     const pool = await prisma.aIChunk.findMany({
-      take: 200,
+      take: 100,
       orderBy: { updatedAt: "desc" },
       select: { type: true, title: true, content: true, embedding: true, sourceId: true },
     });
@@ -50,13 +48,15 @@ export async function POST(req: Request) {
       .slice(0, 5)
       .map((r) => r.c);
 
-    // Fetch fresh package metadata for any selected package IDs
+    // Fetch fresh package metadata for any selected package IDs - parallelized
     const pkgIds = Array.from(new Set(ranked.filter(r => r.type === "package").map(r => r.sourceId)));
+    const caseIds = Array.from(new Set(ranked.filter(r => r.type === "case").map(r => r.sourceId)));
+    
     const [pkgs, cases, allPackages, allCases] = await Promise.all([
-      pkgIds.length > 0 ? prisma.package.findMany({ where: { id: { in: pkgIds } } }) : Promise.resolve([]),
-      prisma.caseStudy.findMany({ where: { id: { in: Array.from(new Set(ranked.filter(r => r.type === "case").map(r => r.sourceId))) } } }),
-      prisma.package.findMany({ orderBy: { priceCents: "asc" } }),
-      prisma.caseStudy.findMany({ orderBy: { createdAt: "desc" } }),
+      pkgIds.length > 0 ? prisma.package.findMany({ where: { id: { in: pkgIds } }, select: { id: true, title: true, description: true, priceCents: true, durationMin: true, tier: true, category: true } }) : Promise.resolve([]),
+      caseIds.length > 0 ? prisma.caseStudy.findMany({ where: { id: { in: caseIds } }, select: { id: true, title: true, summary: true } }) : Promise.resolve([]),
+      prisma.package.findMany({ take: 6, orderBy: { priceCents: "asc" }, select: { id: true, title: true, description: true, priceCents: true, durationMin: true, tier: true, category: true } }),
+      prisma.caseStudy.findMany({ take: 4, orderBy: { createdAt: "desc" }, select: { id: true, title: true, summary: true } }),
     ]);
 
     const contextBlocks = ranked.map((r) => `Type: ${r.type}\nTitle: ${r.title}\nContent: ${r.content}`);

@@ -1,8 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { clearCache } from "@/lib/cache";
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const cookieStore = await cookies();
@@ -15,6 +14,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     where: { id },
     data: { title, slug, description, features, priceCents, durationMin, imageUrl, ...(tier ? { tier } : {}), ...(category ? { category } : {}) },
   });
+  clearCache('packages'); // Invalidate packages cache
   return NextResponse.json({ package: updated });
 }
 

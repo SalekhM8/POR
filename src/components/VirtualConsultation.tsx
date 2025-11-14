@@ -49,7 +49,7 @@ export default function VirtualConsultation() {
           right: `calc(env(safe-area-inset-right, 0px) + 16px)`,
         }}
       >
-        <div className="backdrop-blur bg-white/10 border border-white/15 rounded-full p-3 shadow-md transition group-hover:shadow-lg">
+        <div className="backdrop-blur-xl bg-white/8 border border-white/15 rounded-full p-3 shadow-lg transition-all group-hover:bg-white/12">
           {/* Stylized "i" with eye-shaped dot */}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-white/90">
             {/* eye dot */}
@@ -62,9 +62,9 @@ export default function VirtualConsultation() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[96] backdrop-blur-sm">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
-          <div className="absolute right-4 bottom-24 md:right-6 md:bottom-28 w-[min(92vw,540px)] rounded-3xl border border-white/12 backdrop-blur-md bg-black/90 shadow-2xl fade-in">
+        <div className="fixed inset-0 z-[96] backdrop-blur-md">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+          <div className="absolute right-4 bottom-24 md:right-6 md:bottom-28 w-[min(92vw,540px)] rounded-3xl border border-white/10 backdrop-blur-xl bg-white/5 shadow-2xl fade-in">
             <div className="p-5 md:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="heading-serif text-2xl font-normal">Virtual consultation</h3>
@@ -74,7 +74,7 @@ export default function VirtualConsultation() {
               </div>
               <div className="max-h-[48vh] overflow-auto space-y-3 pr-1 mb-4">
                 {messages.map((m, i) => (
-                  <div key={i} className={`max-w-[86%] text-sm leading-relaxed rounded-2xl px-4 py-2.5 fade-in ${m.role === "user" ? "ml-auto bg-white/12 text-white border border-white/10" : "mr-auto bg-white/5 text-white/85 border border-white/8"}`} style={{ animationDelay: `${i*60}ms` }}>
+                  <div key={i} className={`max-w-[86%] text-sm leading-relaxed rounded-2xl px-4 py-2.5 fade-in backdrop-blur-lg ${m.role === "user" ? "ml-auto bg-white/10 text-white border border-white/15" : "mr-auto bg-white/5 text-white/90 border border-white/10"}`} style={{ animationDelay: `${i*60}ms` }}>
                     {m.content}
                   </div>
                 ))}
@@ -83,7 +83,7 @@ export default function VirtualConsultation() {
               {recs.length > 0 && (
                 <div className="mb-4 grid gap-2">
                   {recs.map((r) => (
-                    <a key={r.id} href="/treatments" className="block matte-card p-4 hover:scale-[1.01] transition-all">
+                    <a key={r.id} href="/treatments" className="block backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/8 hover:scale-[1.01] transition-all">
                       <div className="flex items-center justify-between">
                         <div className="font-medium text-sm">{r.title}</div>
                         <div className="text-white/70 text-xs">£{r.price} · {r.durationMin}m</div>

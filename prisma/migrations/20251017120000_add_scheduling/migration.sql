@@ -44,3 +44,4 @@ CREATE TABLE "public"."RecurringBlock" (
 CREATE INDEX "RecurringBlock_weekday_idx" ON "public"."RecurringBlock"("weekday");
 
 
+

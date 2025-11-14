@@ -1,9 +1,14 @@
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { getCached, setCache, cachedResponse } from "@/lib/cache";
 
 export async function GET() {
+  // Cache packages for 5 minutes (they don't change often)
+  const cacheKey = 'packages:all';
+  const cached = getCached<{ packages: unknown[] }>(cacheKey);
+  if (cached) {
+    return cachedResponse(cached, 300);
+  }
+
   const packages = await prisma.package.findMany();
   const rank: Record<string, number> = { platinum: 0, gold: 1, silver: 2, bronze: 3 };
   const ordered = packages
@@ -14,7 +19,10 @@ export async function GET() {
       if (ra !== rb) return ra - rb;
       return a.priceCents - b.priceCents; // tiebreaker
     });
-  return NextResponse.json({ packages: ordered });
+  
+  const result = { packages: ordered };
+  setCache(cacheKey, result, 300);
+  return cachedResponse(result, 300);
 }
 
 

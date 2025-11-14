@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/POR-removebg-preview.png";
 import { useEffect, useRef, useState } from "react";
+import SlidingGallery from "@/components/SlidingGallery";
 
 export default function Home() {
   const wordContainerRef = useRef<HTMLDivElement | null>(null);
@@ -42,6 +43,9 @@ export default function Home() {
   }, [activeWord]);
   return (
     <main className="relative min-h-screen text-white">
+      {/* Sliding gallery for desktop */}
+      <SlidingGallery />
+      
       <section className="relative w-full min-h-screen bg-black">
         {/* Mobile & Tablet: phone hero with transparent subject and giant faded logo behind */}
         <div className="block lg:hidden relative w-full h-[100svh] overflow-hidden bg-black">
@@ -90,7 +94,7 @@ export default function Home() {
         {/* Desktop: video hero unchanged */}
         <div className="hidden lg:block">
         {/* Video frame with fixed viewport-relative height to define the seam */}
-        <div className="relative w-full -mt-[16px] md:mt-0" style={{ height: "64svh" }}>
+        <div className="relative w-full -mt-[16px] md:mt-0 z-10" style={{ height: "64svh" }}>
           <video
             className="absolute inset-0 w-full h-full hero-video"
             autoPlay
@@ -99,7 +103,7 @@ export default function Home() {
             playsInline
             preload="auto"
           >
-            <source src="/mainHERO.mov" type="video/quicktime" />
+            <source src="/path.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/30" />
             {/* Bottom fade to black to soften cutoff */}
@@ -107,7 +111,7 @@ export default function Home() {
         </div>
 
         {/* Overlay centered on the seam; logo center sits exactly on the edge */}
-        <div className="absolute left-1/2 -translate-x-1/2 z-10 w-full max-w-3xl px-6 text-center md:top-[56vh]" style={{ top: "64svh" }}>
+        <div className="absolute left-1/2 -translate-x-1/2 z-20 w-full max-w-3xl px-6 text-center md:top-[56vh]" style={{ top: "64svh" }}>
           <Image src={logo} alt="Path of Refinement" className="relative mx-auto h-32 md:h-48 w-auto select-none object-contain drop-shadow -translate-y-1/2" priority />
           <p className="heading-serif -mt-10 md:-mt-24 text-white/95 text-2xl md:text-4xl font-light leading-[1.05] text-center">
             Make the <em className="heading-serif italic inline-block align-baseline text-[1.04em] md:text-[1.06em]">best</em> decision

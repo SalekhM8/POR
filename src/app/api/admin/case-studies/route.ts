@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { clearCache } from "@/lib/cache";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -24,8 +23,10 @@ export async function POST(req: Request) {
   const cs = await prisma.caseStudy.create({
     data: { title, slug, summary, content, coverUrl, tags },
   });
+  clearCache('cases'); // Invalidate cases cache
   return NextResponse.json({ caseStudy: cs });
 }
+
 
 
 

@@ -1,8 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { clearCache } from "@/lib/cache";
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const cookieStore = await cookies();
@@ -12,6 +11,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   const { id } = await ctx.params;
   const { title, slug, summary, content, coverUrl, tags } = body || {};
   const updated = await prisma.caseStudy.update({ where: { id }, data: { title, slug, summary, content, coverUrl, tags } });
+  clearCache('cases'); // Invalidate cases cache
   return NextResponse.json({ caseStudy: updated });
 }
 

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, BookingStatus } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { BookingStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 const SLOT_INTERVAL_MIN = 15; // granularity
 const BUFFER_MIN = 15; // gap between bookings

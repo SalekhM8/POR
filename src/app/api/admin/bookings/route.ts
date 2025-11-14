@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { PrismaClient, BookingStatus } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { BookingStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const cookieStore = await cookies();

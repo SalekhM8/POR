@@ -10,7 +10,6 @@ export default function VideoBackdrop({ src }: { src: string }) {
         muted
         playsInline
         preload="metadata"
-        loading="lazy"
       >
         <source src={src} type="video/mp4" />
       </video>
